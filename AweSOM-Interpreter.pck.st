@@ -1,6 +1,13 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:52 pm'!
-'Description '!
-!provides: 'AweSOM-Interpreter' 1 0!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:18:55 pm'!
+'Description The interpreter package of the AweSOM (Simple object machine) implementation.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-Interpreter' 1 1!
+!requires: 'AweSOM-VM' 1 3 nil!
+!requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-CoreObjects' 1 5 nil!
+!requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: #'AweSOM-Interpreter'!
 
 
@@ -263,6 +270,14 @@ printOn: stream
 		print: self contextIndex;
 		nextPut: $>.! !
 
+!SOMBytecode methodsFor: 'printing'!
+printName
+
+	"'SOMBC' size = 6, SOMBCDup --> DUP"
+	| name |
+	name := self class name.
+	^ (name copyFrom: 6 to: name size) asUppercase! !
+
 !SOMBytecode methodsFor: 'constant'!
 length
 
@@ -288,14 +303,6 @@ mgenc: anObject
 stackDepth
 
 	^ 0! !
-
-!SOMBytecode methodsFor: 'printing'!
-printName
-
-	"'SOMBC' size = 6, SOMBCDup --> DUP"
-	| name |
-	name := self class name.
-	^ (name copyFrom: 6 to: name size) asUppercase! !
 
 !SOMBytecode class methodsFor: 'instance creation'!
 in: methodGenerationContext

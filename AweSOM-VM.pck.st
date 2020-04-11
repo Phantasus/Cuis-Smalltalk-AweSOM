@@ -1,6 +1,11 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:56 pm'!
-'Description '!
-!provides: 'AweSOM-VM' 1 0!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:20:53 pm'!
+'Description The vm package of the AweSOM (Simple object machine) implementation.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-VM' 1 4!
+!requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-Meta' 1 3 nil!
 SystemOrganization addCategory: #'AweSOM-VM-Test'!
 SystemOrganization addCategory: #'AweSOM-VM'!
 
@@ -13,26 +18,6 @@ IdentityDictionary subclass: #SOMSymbolTable
 	category: 'AweSOM-VM'!
 !classDefinition: 'SOMSymbolTable class' category: #'AweSOM-VM'!
 SOMSymbolTable class
-	instanceVariableNames: ''!
-
-!classDefinition: #SOMBasicInterpreterTest category: #'AweSOM-VM-Test'!
-TestCase subclass: #SOMBasicInterpreterTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMBasicInterpreterTest class' category: #'AweSOM-VM-Test'!
-SOMBasicInterpreterTest class
-	instanceVariableNames: ''!
-
-!classDefinition: #SOMTest category: #'AweSOM-VM-Test'!
-TestCase subclass: #SOMTest
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMTest class' category: #'AweSOM-VM-Test'!
-SOMTest class
 	instanceVariableNames: ''!
 
 !classDefinition: #SOMClassTest category: #'AweSOM-VM-Test'!
@@ -135,6 +120,26 @@ TestCaseWithUniverse subclass: #SOMUniverseTest
 SOMUniverseTest class
 	instanceVariableNames: ''!
 
+!classDefinition: #SOMBasicInterpreterTest category: #'AweSOM-VM-Test'!
+TestCase subclass: #SOMBasicInterpreterTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'AweSOM-VM-Test'!
+!classDefinition: 'SOMBasicInterpreterTest class' category: #'AweSOM-VM-Test'!
+SOMBasicInterpreterTest class
+	instanceVariableNames: ''!
+
+!classDefinition: #SOMTest category: #'AweSOM-VM-Test'!
+TestCase subclass: #SOMTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'AweSOM-VM-Test'!
+!classDefinition: 'SOMTest class' category: #'AweSOM-VM-Test'!
+SOMTest class
+	instanceVariableNames: ''!
+
 !classDefinition: #HaltPrimData category: #'AweSOM-VM'!
 Object subclass: #HaltPrimData
 	instanceVariableNames: ''
@@ -179,381 +184,6 @@ in: universe
 	^ self new
 		universe: universe;
 		yourself.! !
-
-!SOMBasicInterpreterTest methodsFor: 'asserting'!
-assert: actual equals: aValue as: aType
-	aType = #Integer ifTrue: [
-		self assert: actual number equals: aValue.
-		^ self ].
-	
-	aType = #Double ifTrue: [
-		self assert: actual number equals: aValue.
-		^ self ].
-	
-	aType = #Class ifTrue: [
-		self assert: actual somName symbol equals: aValue.
-		^ self ].
-	
-	aType = #Symbol ifTrue: [
-		self assert: actual symbol equals: aValue.
-		^ self ].
-	
-	self fail: 'SOM Value handler missing for ', actual asString.
-	
-	! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-load: className execute: methodName expect: aValue as: aType
-	| result |
-	SOMUniverse classPaths: SOMTools basicInterpreterTestClassPath.
-	
-	[ result := SOMUniverse new start: className method: methodName. ] on: SOMParseError do: [:e | 
-		aType == #SOMParseError ifFalse: [ e signal ]
-	 ].
-	
-	aType == #SOMParseError ifFalse: [
-		self assert: result equals: aValue as: aType ]! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testArrays1
-	self load: 'Arrays' execute: 'testEmptyToInts' expect: 3 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testArrays2
-	self load: 'Arrays' execute: 'testPutAllInt' expect: 5 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testArrays3
-	self load: 'Arrays' execute: 'testPutAllNil' expect: 'Nil' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testArrays4
-	self load: 'Arrays' execute: 'testPutAllBlock' expect: 3 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testArrays5
-	self load: 'Arrays' execute: 'testNewWithAll' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining1
-	self load: 'BlockInlining' execute: 'testNoInlining' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining10
-	self load: 'BlockInlining' execute: 'testDeepNestedBlocksInInlinedIfFalse' expect: 43 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining11
-	self load: 'BlockInlining' execute: 'testDeepDeepNestedTrue' expect: 9 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining12
-	self load: 'BlockInlining' execute: 'testDeepDeepNestedFalse' expect: 43 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining13
-	self load: 'BlockInlining' execute: 'testToDoNestDoNestIfTrue' expect: 2 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining2
-	self load: 'BlockInlining' execute: 'testOneLevelInlining' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining3
-	self load: 'BlockInlining' execute: 'testOneLevelInliningWithLocalShadowTrue' expect: 2 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining4
-	self load: 'BlockInlining' execute: 'testOneLevelInliningWithLocalShadowFalse' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining5
-	self load: 'BlockInlining' execute: 'testBlockNestedInIfTrue' expect: 2 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining6
-	self load: 'BlockInlining' execute: 'testBlockNestedInIfFalse' expect: 42 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining7
-	self load: 'BlockInlining' execute: 'testDeepNestedInlinedIfTrue' expect: 3 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining8
-	self load: 'BlockInlining' execute: 'testDeepNestedInlinedIfFalse' expect: 42 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlockInlining9
-	self load: 'BlockInlining' execute: 'testDeepNestedBlocksInInlinedIfTrue' expect: 5 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlocks1
-	self load: 'Blocks' execute: 'testArg1' expect: 42 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlocks2
-	self load: 'Blocks' execute: 'testArg2' expect: 77 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlocks3
-	self load: 'Blocks' execute: 'testArgAndLocal' expect: 8 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testBlocks4
-	self load: 'Blocks' execute: 'testArgAndContext' expect: 8 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification1
-	self load: 'CompilerSimplification' execute: 'testReturnConstantSymbol' expect: 'constant' as: #Symbol! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification2
-	self load: 'CompilerSimplification' execute: 'testReturnConstantInt' expect: 42 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification3
-	self load: 'CompilerSimplification' execute: 'testReturnSelf' expect: 'CompilerSimplification' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification4
-	self load: 'CompilerSimplification' execute: 'testReturnSelfImplicitly' expect: 'CompilerSimplification' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification5
-	self load: 'CompilerSimplification' execute: 'testReturnArgumentN' expect: 55 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification6
-	self load: 'CompilerSimplification' execute: 'testReturnArgumentA' expect: 44 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification7
-	self load: 'CompilerSimplification' execute: 'testSetField' expect: 'foo' as: #Symbol! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testCompilerSimplification8
-	self load: 'CompilerSimplification' execute: 'testGetField' expect: 40 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testHash
-	self load: 'Hash' execute: 'testHash' expect: 444 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testIfTrueIfFalse
-	self load: 'IfTrueIfFalse' execute: 'test' expect: 42 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testIfTrueIfFalse2
-	self load: 'IfTrueIfFalse' execute: 'test2' expect: 33 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testIfTrueIfFalse3
-	self load: 'IfTrueIfFalse' execute: 'test3' expect: 4 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testMethodCall1
-	self load: 'MethodCall' execute: 'test' expect: 42 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testMethodCall2
-	self load: 'MethodCall' execute: 'test2' expect: 42 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalReturn1
-	self load: 'NonLocalReturn' execute: 'test1' expect: 42 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalReturn2
-	self load: 'NonLocalReturn' execute: 'test2' expect: 43 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalReturn3
-	self load: 'NonLocalReturn' execute: 'test3' expect: 3 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalReturn4
-	self load: 'NonLocalReturn' execute: 'test4' expect: 42 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalReturn5
-	self load: 'NonLocalReturn' execute: 'test5' expect: 22 as: #Integer.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNonLocalVars
-	self load: 'NonLocalVars' execute: 'testWriteDifferentTypes' expect: 3.75 as: #Double! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testNumberOfTests
-	| numTestMethods |
-	numTestMethods := (self class methods select: [ :m | m selector beginsWith: 'test' ]) size.
-	numTestMethods := numTestMethods - 1. "ignoring this method"
-	self load: 'NumberOfTests' execute: 'numberOfTests' expect: numTestMethods as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testObjectCreation
-	<expectedFailure> "Currently, AweSOM is simply too slow to execute this test sensibly"
-	self timeLimit: 5 seconds.
-	
-	self load: 'ObjectCreation' execute: 'test' expect: 1000000 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testRegressions1
-	self load: 'Regressions' execute: 'testSymbolEquality' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testRegressions2
-	self load: 'Regressions' execute: 'testSymbolReferenceEquality' expect: 1 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testReturn1
-	self load: 'Return' execute: 'testReturnSelf' expect: 'Return' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testReturn2
-	self load: 'Return' execute: 'testReturnSelfImplicitly' expect: 'Return' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testReturn3
-	self load: 'Return' execute: 'testNoReturnReturnSelf' expect: 'Return' as: #Class! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testReturn4
-	self load: 'Return' execute: 'testBlockReturnsImplicitlyLastValue' expect: 4 as: #Integer! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testSelfTestAssignSelf
-	self load: 'Self' execute: 'testAssignSelf' expect: 42 as: #SOMParseError.! !
-
-!SOMBasicInterpreterTest methodsFor: 'tests'!
-testSelfTestAssignSuper
-	self load: 'Self' execute: 'testAssignSuper' expect: 42 as: #SOMParseError.! !
-
-!SOMTest methodsFor: 'tests'!
-exec: aTest
-	| universe |
-	universe := SOMUniverse new.
-	universe start: {'-cp'. 'Smalltalk'. 'TestSuite/TestHarness.som'. aTest}.
-	self assert: universe exitCode equals: 0.
-! !
-
-!SOMTest methodsFor: 'tests'!
-setUp
-	SOMUniverse classPaths: nil! !
-
-!SOMTest methodsFor: 'tests'!
-testArray
-	self exec: 'Array'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testBlock
-	self exec: 'Block'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testClassLoading
-	self exec: 'ClassLoading'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testClassStructure
-	self exec: 'ClassStructure'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testClosure
-	self exec: 'Closure'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testCoercion
-	self exec: 'Coercion'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testCompilerReturn
-	self exec: 'CompilerReturn'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testDoesNotUnderstand
-	self exec: 'DoesNotUnderstand'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testDouble
-	self exec: 'Double'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testEmpty
-	self exec: 'Empty'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testGlobal
-	self exec: 'Global'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testHash
-	self exec: 'Hash'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testInteger
-	self exec: 'Integer'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testPreliminary
-	self exec: 'Preliminary'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testReflection
-	self exec: 'Reflection'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSelfBlock
-	self exec: 'SelfBlock'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSet
-	self exec: 'Set'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSpecialSelectors
-	self exec: 'SpecialSelectors'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testString
-	self exec: 'String'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSuper
-	self exec: 'Super'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSymbol
-	self exec: 'Symbol'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testSystem
-	self exec: 'System'
-! !
-
-!SOMTest methodsFor: 'tests'!
-testVector
-	self exec: 'Vector'
-! !
 
 !SOMClassTest methodsFor: 'tests'!
 test01ObjectCreation
@@ -1455,6 +1085,383 @@ testHandleArguments
 	| args |
 	args := universe handleArguments: { 'Test.som'. '1'. '2'. '3' }.
 	self assert: args equals: { 'Test'. '1'. '2'. '3' }.! !
+
+!SOMBasicInterpreterTest methodsFor: 'asserting'!
+assert: actual equals: aValue as: aType
+	aType = #Integer ifTrue: [
+		self assert: actual number equals: aValue.
+		^ self ].
+	
+	aType = #Double ifTrue: [
+		self assert: actual number equals: aValue.
+		^ self ].
+	
+	aType = #Class ifTrue: [
+		self assert: actual somName symbol equals: aValue.
+		^ self ].
+	
+	aType = #Symbol ifTrue: [
+		self assert: actual symbol equals: aValue.
+		^ self ].
+	
+	self fail: 'SOM Value handler missing for ', actual asString.
+	
+	! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+load: className execute: methodName expect: aValue as: aType
+	| result |
+	SOMUniverse classPaths: SOMTools basicInterpreterTestClassPath.
+	
+	[ result := SOMUniverse new start: className method: methodName. ] on: SOMParseError do: [:e | 
+		aType == #SOMParseError ifFalse: [ e signal ]
+	 ].
+	
+	aType == #SOMParseError ifFalse: [
+		self assert: result equals: aValue as: aType ]! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testArrays1
+	self load: 'Arrays' execute: 'testEmptyToInts' expect: 3 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testArrays2
+	self load: 'Arrays' execute: 'testPutAllInt' expect: 5 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testArrays3
+	self load: 'Arrays' execute: 'testPutAllNil' expect: 'Nil' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testArrays4
+	self load: 'Arrays' execute: 'testPutAllBlock' expect: 3 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testArrays5
+	self load: 'Arrays' execute: 'testNewWithAll' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining1
+	self load: 'BlockInlining' execute: 'testNoInlining' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining10
+	self load: 'BlockInlining' execute: 'testDeepNestedBlocksInInlinedIfFalse' expect: 43 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining11
+	self load: 'BlockInlining' execute: 'testDeepDeepNestedTrue' expect: 9 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining12
+	self load: 'BlockInlining' execute: 'testDeepDeepNestedFalse' expect: 43 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining13
+	self load: 'BlockInlining' execute: 'testToDoNestDoNestIfTrue' expect: 2 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining2
+	self load: 'BlockInlining' execute: 'testOneLevelInlining' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining3
+	self load: 'BlockInlining' execute: 'testOneLevelInliningWithLocalShadowTrue' expect: 2 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining4
+	self load: 'BlockInlining' execute: 'testOneLevelInliningWithLocalShadowFalse' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining5
+	self load: 'BlockInlining' execute: 'testBlockNestedInIfTrue' expect: 2 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining6
+	self load: 'BlockInlining' execute: 'testBlockNestedInIfFalse' expect: 42 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining7
+	self load: 'BlockInlining' execute: 'testDeepNestedInlinedIfTrue' expect: 3 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining8
+	self load: 'BlockInlining' execute: 'testDeepNestedInlinedIfFalse' expect: 42 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlockInlining9
+	self load: 'BlockInlining' execute: 'testDeepNestedBlocksInInlinedIfTrue' expect: 5 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlocks1
+	self load: 'Blocks' execute: 'testArg1' expect: 42 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlocks2
+	self load: 'Blocks' execute: 'testArg2' expect: 77 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlocks3
+	self load: 'Blocks' execute: 'testArgAndLocal' expect: 8 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testBlocks4
+	self load: 'Blocks' execute: 'testArgAndContext' expect: 8 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification1
+	self load: 'CompilerSimplification' execute: 'testReturnConstantSymbol' expect: 'constant' as: #Symbol! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification2
+	self load: 'CompilerSimplification' execute: 'testReturnConstantInt' expect: 42 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification3
+	self load: 'CompilerSimplification' execute: 'testReturnSelf' expect: 'CompilerSimplification' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification4
+	self load: 'CompilerSimplification' execute: 'testReturnSelfImplicitly' expect: 'CompilerSimplification' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification5
+	self load: 'CompilerSimplification' execute: 'testReturnArgumentN' expect: 55 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification6
+	self load: 'CompilerSimplification' execute: 'testReturnArgumentA' expect: 44 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification7
+	self load: 'CompilerSimplification' execute: 'testSetField' expect: 'foo' as: #Symbol! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testCompilerSimplification8
+	self load: 'CompilerSimplification' execute: 'testGetField' expect: 40 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testHash
+	self load: 'Hash' execute: 'testHash' expect: 444 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testIfTrueIfFalse
+	self load: 'IfTrueIfFalse' execute: 'test' expect: 42 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testIfTrueIfFalse2
+	self load: 'IfTrueIfFalse' execute: 'test2' expect: 33 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testIfTrueIfFalse3
+	self load: 'IfTrueIfFalse' execute: 'test3' expect: 4 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testMethodCall1
+	self load: 'MethodCall' execute: 'test' expect: 42 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testMethodCall2
+	self load: 'MethodCall' execute: 'test2' expect: 42 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalReturn1
+	self load: 'NonLocalReturn' execute: 'test1' expect: 42 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalReturn2
+	self load: 'NonLocalReturn' execute: 'test2' expect: 43 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalReturn3
+	self load: 'NonLocalReturn' execute: 'test3' expect: 3 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalReturn4
+	self load: 'NonLocalReturn' execute: 'test4' expect: 42 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalReturn5
+	self load: 'NonLocalReturn' execute: 'test5' expect: 22 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testNonLocalVars
+	self load: 'NonLocalVars' execute: 'testWriteDifferentTypes' expect: 3.75 as: #Double! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 4/11/2020 11:53:28'!
+testNumberOfTests
+	| numTestMethods |
+	numTestMethods := (self class methodsSelect: [ :m | m selector beginsWith: 'test' ]) size.
+	numTestMethods := numTestMethods - 1. "ignoring this method"
+	self load: 'NumberOfTests' execute: 'numberOfTests' expect: numTestMethods as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 4/11/2020 13:12:21'!
+testObjectCreation
+	"Currently, AweSOM is simply too slow to execute this test sensibly"
+	
+	"skip as testing takes too long"
+	"
+	self load: 'ObjectCreation' execute: 'test' expect: 1000000 as: #Integer
+	
+	"! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testRegressions1
+	self load: 'Regressions' execute: 'testSymbolEquality' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testRegressions2
+	self load: 'Regressions' execute: 'testSymbolReferenceEquality' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testReturn1
+	self load: 'Return' execute: 'testReturnSelf' expect: 'Return' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testReturn2
+	self load: 'Return' execute: 'testReturnSelfImplicitly' expect: 'Return' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testReturn3
+	self load: 'Return' execute: 'testNoReturnReturnSelf' expect: 'Return' as: #Class! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testReturn4
+	self load: 'Return' execute: 'testBlockReturnsImplicitlyLastValue' expect: 4 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testSelfTestAssignSelf
+	self load: 'Self' execute: 'testAssignSelf' expect: 42 as: #SOMParseError.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests'!
+testSelfTestAssignSuper
+	self load: 'Self' execute: 'testAssignSuper' expect: 42 as: #SOMParseError.! !
+
+!SOMTest methodsFor: 'tests' stamp: 'jpb 4/11/2020 15:35:14'!
+exec: aTest
+	| universe |
+	universe := SOMUniverse new.
+	universe start: {'-cp'. 'Smalltalk'. 'TestSuite/TestHarness.som'. aTest}.
+	self assert: 0 equals: universe exitCode.! !
+
+!SOMTest methodsFor: 'tests'!
+setUp
+	SOMUniverse classPaths: nil! !
+
+!SOMTest methodsFor: 'tests'!
+testArray
+	self exec: 'Array'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testBlock
+	self exec: 'Block'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testClassLoading
+	self exec: 'ClassLoading'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testClassStructure
+	self exec: 'ClassStructure'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testClosure
+	self exec: 'Closure'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testCoercion
+	self exec: 'Coercion'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testCompilerReturn
+	self exec: 'CompilerReturn'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testDoesNotUnderstand
+	self exec: 'DoesNotUnderstand'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testDouble
+	self exec: 'Double'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testEmpty
+	self exec: 'Empty'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testGlobal
+	self exec: 'Global'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testHash
+	self exec: 'Hash'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testInteger
+	self exec: 'Integer'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testPreliminary
+	self exec: 'Preliminary'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testReflection
+	self exec: 'Reflection'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSelfBlock
+	self exec: 'SelfBlock'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSet
+	self exec: 'Set'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSpecialSelectors
+	self exec: 'SpecialSelectors'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testString
+	self exec: 'String'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSuper
+	self exec: 'Super'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSymbol
+	self exec: 'Symbol'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testSystem
+	self exec: 'System'
+! !
+
+!SOMTest methodsFor: 'tests'!
+testVector
+	self exec: 'Vector'
+! !
 
 !HaltPrimData class methodsFor: 'initialization'!
 break

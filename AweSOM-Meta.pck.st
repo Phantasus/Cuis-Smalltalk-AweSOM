@@ -1,6 +1,11 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:54 pm'!
-'Description '!
-!provides: 'AweSOM-Meta' 1 0!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:20:02 pm'!
+'Description The base package of the AweSOM (Simple object machine) implementation,
+which contains shared base functionality.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-Meta' 1 3!
+!requires: 'Cuis-Base' 50 4103 nil!
 SystemOrganization addCategory: #'AweSOM-Meta'!
 
 
@@ -15,10 +20,10 @@ SOMTools class
 	instanceVariableNames: 'basePath'!
 
 
-!SOMTools class methodsFor: 'class path'!
+!SOMTools class methodsFor: 'class path' stamp: 'jpb 4/10/2020 23:01:17'!
 basePath
 	basePath ifNil: [ 
-		basePath := Smalltalk platform currentWorkingDirectoryPath, '/core-lib' ].
+		basePath := Smalltalk imagePath, '/core-lib' ].
 	
 	^ basePath! !
 
@@ -63,14 +68,6 @@ setClassPathBase: aBasePath
 		collect: [:ea | ea asAbsolute fullName ].
 	^ SOMUniverse classPaths: standard , examples.! !
 
-!SOMTools class methodsFor: 'recompiling'!
-recompile
-
-	"SOMTools recompile"
-	(PackageInfo named: 'AweSOM') classes
-		do: [:class | class compileAll]
-		displayingProgress: 'Recompiling AweSOM'.! !
-
 !SOMTools class methodsFor: 'tools'!
 loc
 
@@ -89,20 +86,13 @@ locWithoutTests
 		inject: 0 into: [:sum :class | sum + class linesOfCode].
 ! !
 
-!SOMTools class methodsFor: 'fileout'!
-fileout
+!SOMTools class methodsFor: 'recompiling'!
+recompile
 
-	| cs pi |
-	cs := ChangeSet newChangeSet.
-	pi := PackageInfo named: 'AweSOM'.
-	pi classes do: [:ea | cs addClass: ea].
-	pi methods do: [:ea |
-		cs
-			noteNewMethod: ea compiledMethod
-			forClass: ea actualClass
-			selector: ea methodSymbol
-			priorMethod: nil].
-	cs fileOut.! !
+	"SOMTools recompile"
+	(PackageInfo named: 'AweSOM') classes
+		do: [:class | class compileAll]
+		displayingProgress: 'Recompiling AweSOM'.! !
 
 !SOMTools class methodsFor: 'as yet unclassified'!
 parseBenchmarkString: string
@@ -141,3 +131,43 @@ lintOnClasses: classes
 	ORLintBrowser
 		openRule: RBCompositeLintRule allRules
 		environment: env.! !
+
+!SOMTools class methodsFor: 'fileout'!
+fileout
+
+	| cs pi |
+	cs := ChangeSet newChangeSet.
+	pi := PackageInfo named: 'AweSOM'.
+	pi classes do: [:ea | cs addClass: ea].
+	pi methods do: [:ea |
+		cs
+			noteNewMethod: ea compiledMethod
+			forClass: ea actualClass
+			selector: ea methodSymbol
+			priorMethod: nil].
+	cs fileOut.! !
+
+!Object methodsFor: '*AweSOM-Meta' stamp: 'jpb 4/11/2020 11:06:49'!
+isSOMObject
+	^ false! !
+
+!BlockClosure methodsFor: '*AweSOM-Meta' stamp: 'jpb 4/10/2020 23:20:48'!
+doWhileTrue: conditionBlock
+	"Evaluate the receiver once, then again as long the value of conditionBlock is true."
+ 
+	| result |
+	[result := self value.
+	conditionBlock value] whileTrue.
+
+	^ result! !
+
+!SequenceableCollection methodsFor: '*AweSOM-Meta' stamp: 'jpb 4/11/2020 11:04:50'!
+doWithIndex: aBlock2
+	"Support Set enumeration with a counter, even though not ordered"
+	| index |
+	index := 0.
+	self do: [:item | aBlock2 value: item value: (index := index+1)]! !
+
+!String methodsFor: '*AweSOM-Meta' stamp: 'jpb 4/11/2020 11:03:45'!
+split: aString 
+	^aString findTokens: self ! !

@@ -1,11 +1,26 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:43 pm'!
-'Description '!
-!provides: 'AweSOM-CoreObjects' 1 0!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:19:04 pm'!
+'Description The core objects package of the AweSOM (Simple object machine) implementation,
+which contains the core objects used by the interpreter and vm.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-CoreObjects' 1 5!
+!requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: #'AweSOM-CoreObjects'!
 
 
+!classDefinition: #SOMObject category: #'AweSOM-CoreObjects'!
+Object subclass: #SOMObject
+	instanceVariableNames: 'universe theHash fields indexableFields somClass'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'AweSOM-CoreObjects'!
+!classDefinition: 'SOMObject class' category: #'AweSOM-CoreObjects'!
+SOMObject class
+	instanceVariableNames: ''!
+
 !classDefinition: #SOMArray category: #'AweSOM-CoreObjects'!
-Object subclass: #SOMArray
+SOMObject subclass: #SOMArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -25,7 +40,7 @@ SOMFrame class
 	instanceVariableNames: ''!
 
 !classDefinition: #SOMBlock category: #'AweSOM-CoreObjects'!
-Object subclass: #SOMBlock
+SOMObject subclass: #SOMBlock
 	instanceVariableNames: 'somBlockMethod somContext'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -35,23 +50,13 @@ SOMBlock class
 	instanceVariableNames: ''!
 
 !classDefinition: #SOMClass category: #'AweSOM-CoreObjects'!
-Object subclass: #SOMClass
+SOMObject subclass: #SOMClass
 	instanceVariableNames: 'somSuperClass somName somInstanceFields somInstanceInvokables'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
 !classDefinition: 'SOMClass class' category: #'AweSOM-CoreObjects'!
 SOMClass class
-	instanceVariableNames: ''!
-
-!classDefinition: #SOMObject category: #'AweSOM-CoreObjects'!
-Object subclass: #SOMObject
-	instanceVariableNames: 'universe theHash fields indexableFields somClass'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMObject class' category: #'AweSOM-CoreObjects'!
-SOMObject class
 	instanceVariableNames: ''!
 
 !classDefinition: #SOMInvokable category: #'AweSOM-CoreObjects'!
@@ -168,19 +173,6 @@ SOMSystem class
 !SOMMethod commentStamp: '' prior: 0!
 Bytecodes are currently stored in a separate collection. This is not the way it is implemented in cppsom.!
 
-!SOMArray methodsFor: 'printing'!
-printOn: stream
-
-	stream nextPutAll: 'SOMArray'.
-	self elements printAsSelfEvaluatingFormOn: stream.! !
-
-!SOMFrame methodsFor: 'printing'!
-printOn: stream
-
-	stream nextPutAll: 'SOMFrame:'.
-	stream cr.
-	self printStackOn: stream! !
-
 !SOMObject class methodsFor: 'compiling'!
 doneCompiling
 	super doneCompiling.! !
@@ -202,6 +194,22 @@ printOn: stream
 	stream
 		nextPutAll: 'a SOM';
 		nextPutAll: self somClass somName string! !
+
+!SOMArray methodsFor: 'printing' stamp: 'jpb 4/11/2020 13:17:06'!
+printOn: stream
+
+	stream nextPutAll: 'SOMArray'.
+	
+	stream nextPut: ${.
+	self elements do: [:el | el printOn: stream] separatedBy: [ stream nextPutAll: '. '].
+	stream nextPut: $}.! !
+
+!SOMFrame methodsFor: 'printing'!
+printOn: stream
+
+	stream nextPutAll: 'SOMFrame:'.
+	stream cr.
+	self printStackOn: stream! !
 
 !SOMInvokable methodsFor: 'accessing'!
 printOn: stream
@@ -237,633 +245,6 @@ printOn: stream
 		nextPut: $(;
 		nextPutAll: self string printString;
 		nextPut: $).! !
-
-!SOMArray methodsFor: 'accessing'!
-at: index
-	^ self indexableFields at: index! !
-
-!SOMArray methodsFor: 'accessing'!
-at: index put: object
-	^ self indexableFields at: index put: object! !
-
-!SOMArray methodsFor: 'accessing'!
-elements
-	^ self indexableFields! !
-
-!SOMArray methodsFor: 'accessing'!
-indexOf: element 
-	^ self indexableFields indexOf: element! !
-
-!SOMArray methodsFor: 'accessing'!
-size
-	^ self indexableFields size! !
-
-!SOMArray methodsFor: 'accessing'!
-wipeIndexableFields
-	1 to: self elements size do: [ :i | self at: i put: universe globalNil ]! !
-
-!SOMArray methodsFor: 'copying'!
-copyFrom: fromIndex to: toIndex
-
-	^ self indexableFields copyFrom: fromIndex to: toIndex! !
-
-!SOMArray methodsFor: 'primitives'!
-primat: index
-
-	^ self at: index number.! !
-
-!SOMArray methodsFor: 'primitives'!
-primat: index put: object
-
-	^ self at: index number put: object.! !
-
-!SOMArray methodsFor: 'primitives'!
-primlength
-
-	^ universe newNumber: self size! !
-
-!SOMArray methodsFor: 'adding'!
-add: item
-	
-	self resize: self size + 1.
-	self at: self size put: item! !
-
-!SOMArray methodsFor: 'enumerating'!
-do: block
-
-	self indexableFields do: block! !
-
-!SOMArray methodsFor: 'enumerating'!
-withIndexDo: block
-	indexableFields withIndexDo: block! !
-
-!SOMArray methodsFor: 'resizing'!
-resize: newSize
-	newSize < self size
-		ifTrue: [self indexableFields: (self indexableFields copyFrom: 1 to: newSize)]
-		ifFalse: [self indexableFields: (self indexableFields, (Array new: newSize - self size))]! !
-
-!SOMArray class methodsFor: 'as yet unclassified'!
-inUniverse: universe size: size
-
-	^ self
-		inUniverse: universe
-		withNumberOfAdditionalFields: 0
-		withNumberOfIndexableFields: size! !
-
-!SOMArray class methodsFor: 'as yet unclassified'!
-inUniverse: universe withAll: squeakColl
-
-	| result |
-	result := self inUniverse: universe size: squeakColl size.
-	squeakColl withIndexDo: [:each :i | result at: i put: each].
-	^ result! !
-
-!SOMArray class methodsFor: 'primitives'!
-primnew: size inSomClass: somClass
-	^ self 
-		inUniverse: somClass universe
-		size: size number! !
-
-!SOMFrame methodsFor: 'copying'!
-copyArgumentsFrom: oldFrame
-
-	| numArgs |
-	numArgs := self somMethod numberOfArguments.
-	1 to: numArgs do: [:argIndex |
-		self 
-			at: argIndex
-			put: (oldFrame stackElementAtIndex: numArgs - argIndex + 1)].! !
-
-!SOMFrame methodsFor: 'debugging'!
-installStep
-
-	| stepBytecodeIndex |
-	"find next send or popLocal"
-	stepBytecodeIndex := (bytecodeIndex to: self somMethod bytecodes size)
-		detect: [:index |
-			{SOMBCSend. SOMBCSuperSend. SOMBCPopLocal. SOMBCReturnLocal. SOMBCReturnNonLocal} 
-				anySatisfy: [:bytecodeClass | 
-					(self somMethod bytecodeAt: index) isKindOf: bytecodeClass]]
-		ifNone: [
-			self somPreviousFrame ~= universe globalNil
-				ifTrue: [self somPreviousFrame installStep].			
-			^ self ].
-		
-	self installStepBytecodeAt: stepBytecodeIndex.! !
-
-!SOMFrame methodsFor: 'debugging'!
-installStepBytecode
-
-	"find next bytecode or look in caller frame"
-	bytecodeIndex > self somMethod bytecodes size
-		ifTrue: [
-			self somPreviousFrame ~= universe globalNil
-				ifTrue: [self somPreviousFrame installStepBytecode].			
-			^ self ].
-		
-	self installStepBytecodeAt: bytecodeIndex! !
-
-!SOMFrame methodsFor: 'debugging'!
-installStepBytecodeAt: stepBytecodeIndex
-	"replace next bytecode with step bytecode"
-	
-	| bytecode stepBytecode |
-	bytecode := self somMethod bytecodeAt: stepBytecodeIndex.
-	bytecode ifKindOf: SOMBCStep thenDo: [^ bytecode owningFrames add: self].
-	stepBytecode := (SOMBCStep new)
-		originalBytecode: bytecode;
-		owningFrames: {self} asSet;
-		yourself.
-	self somMethod bytecodeAt: stepBytecodeIndex put: stepBytecode! !
-
-!SOMFrame methodsFor: 'testing'!
-hasContext
-	^ self somContext ~= self universe globalNil! !
-
-!SOMFrame methodsFor: 'testing'!
-hasPreviousFrame
-	
-	^ self somPreviousFrame ~~ self universe globalNil! !
-
-!SOMFrame methodsFor: 'testing'!
-isBootstrapFrame
-	^ self hasPreviousFrame not! !
-
-!SOMFrame methodsFor: 'stack manipulation'!
-pop
-
-	| oldPosition |
-	oldPosition := self stackPointer.
-	oldPosition <= (self somMethod numberOfLocals + self somMethod numberOfArguments) 
-		ifTrue: [self error: 'Stack is empty'].
-	self stackPointer: oldPosition - 1.
-	^ self at: oldPosition! !
-
-!SOMFrame methodsFor: 'stack manipulation'!
-popN: numOfElements
-
-	| oldPosition |
-	numOfElements = 0 ifTrue: [^ {}].
-	oldPosition := self stackPointer.
-	oldPosition < (self somMethod numberOfLocals + self somMethod numberOfArguments + numOfElements) 
-		ifTrue: [self error: 'Stack is empty'].
-	self stackPointer: oldPosition - numOfElements.
-	^ self copyFrom: oldPosition - numOfElements + 1 to: oldPosition! !
-
-!SOMFrame methodsFor: 'stack manipulation'!
-push: object
-
-	self stackPointer: self stackPointer + 1.
-	self at: self stackPointer put: object.! !
-
-!SOMFrame methodsFor: 'stack manipulation'!
-removeN: numOfElements
-
-	| oldPosition |
-	numOfElements = 0 ifTrue: [^ self].
-	oldPosition := self stackPointer.
-	oldPosition < (self somMethod numberOfLocals + self somMethod numberOfArguments + numOfElements) 
-		ifTrue: [self error: 'Stack is empty'].
-	self stackPointer: oldPosition - numOfElements.! !
-
-!SOMFrame methodsFor: 'initialization'!
-initialize
-	somContext := universe globalNil.
-	self localOffset: 0.
-	self bytecodeIndex: 0.
-	self stackPointer: 0.
-	self clearPreviousFrame! !
-
-!SOMFrame methodsFor: 'initialization'!
-resetStackPointer
-	self localOffset: 
-		(self somMethod numberOfArguments).
-	self stackPointer: 
-		(self somMethod numberOfLocals + self somMethod numberOfArguments) ! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-argumentAtIndex: index contextLevel: level
-
-	| contextFrame |
-	contextFrame := self frameAtContextLevel: level.
-	
-	index > contextFrame somMethod numberOfArguments
-		ifTrue: [self error: 'index > #args'].
-		
-	^ contextFrame at: index! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-argumentAtIndex: index contextLevel: level put: object
-	| contextFrame |
-	contextFrame := self frameAtContextLevel: level.
-	
-	index > contextFrame somMethod numberOfArguments 
-		ifTrue: [self error: 'index > #args'].
-		
-	(self frameAtContextLevel: level)
-		at: index put: object! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-clearPreviousFrame
-	self somPreviousFrame: self universe globalNil! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-frameAtContextLevel: level 
-	| frame |
-	frame := self.
-	level - 1 timesRepeat: [ frame := frame somContext ].
-	^ frame! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-localAtIndex: index contextLevel: level
-	|contextFrame|
-	contextFrame := self frameAtContextLevel: level.
-	^ contextFrame at: (contextFrame localOffset + index)! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-localAtIndex: index contextLevel: level put: object
-	|contextFrame|
-	contextFrame := self frameAtContextLevel: level.
-	contextFrame at: (contextFrame localOffset + index) put: object! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-remainingStackSize
-	^ self numberOfIndexableFields - self stackPointer! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-stackElementAtIndex: index
-	^ self at: (self stackPointer - index + 1) ! !
-
-!SOMFrame methodsFor: 'as yet unclassified'!
-stackElementAtIndex: index put: object
-	self at: (self stackPointer - index + 1) 
-		put: object! !
-
-!SOMFrame methodsFor: 'printing'!
-printBytecodes
-
-	self printBytecodesOn: Transcript.
-	Transcript endEntry! !
-
-!SOMFrame methodsFor: 'printing'!
-printBytecodesOn: stream
-
-	"prints value of stack pointer and the current bytecodes"
-	stream
-		nextPutAll: 'Method: ';
-		nextPutAll: self somMethod asString.
-	self somMethod numberOfArguments > 0 ifTrue: [
-		stream
-			nextPutAll: ' in object: ';
-			nextPutAll: (self argumentAtIndex: 1 contextLevel: 1) asString].
-	stream lf.
-	self somMethod bytecodes doWithIndex: [:bc :index |
-		index = (self bytecodeIndex - 1) ifTrue: [stream nextPutAll: '->'].
-		stream nextPutAll: bc asString; lf.
-	]! !
-
-!SOMFrame methodsFor: 'printing'!
-printStack
-	
-	self printStackOn: Transcript.
-	Transcript endEntry.! !
-
-!SOMFrame methodsFor: 'printing'!
-printStackElement: somObject atIndex: index on: stream 
-	
-	| somNil somClazz |
-	stream
-		nextPutAll: '[';
-		nextPutAll: index asString;
-		nextPutAll: '] '.
-		
-	index <= self somMethod numberOfArguments 
-		ifTrue: [stream nextPutAll: '(arg '; nextPutAll: index asString; nextPutAll: ') '].
-	((index > self somMethod numberOfArguments) and: [index <= (self somMethod numberOfLocals + self somMethod numberOfArguments)])
-		ifTrue: [stream nextPutAll: '(local '; nextPutAll: (index - self somMethod numberOfArguments) asString; nextPutAll: ') '].
-			
-	somNil := self universe globalNil.
-	(somObject isNil or: [ somObject == somNil ]) ifTrue: 
-		[ stream
-			nextPutAll: 'nil';
-			lf.
-		^ self ].
-	somClazz := [somObject somClass] on: Error do: [somObject].
-	(somClazz isNil or: [ somClazz == somNil ]) ifTrue: 
-		[ stream
-			nextPutAll: 'object without class';
-			lf.
-		^ self ].
-	stream
-		nextPutAll: somObject asString;
-		nextPutAll: ' with class: ';
-		nextPutAll: somClazz asString;
-		lf! !
-
-!SOMFrame methodsFor: 'printing'!
-printStackOn: stream
-	"prints value of stack pointer and the content of each stack slot"
-
-	stream nextPutAll: '    Method: ';
-		nextPutAll: self somMethod asString;
-		lf;
-		nextPutAll: '    Stackpointer: ';
-		nextPutAll: self stackPointer asString;
-		lf.
-	
-	self stackPointer to: 1 by: -1 do:
-		[ :index |
-		| somObject |
-		index = self stackPointer ifTrue: [stream nextPutAll: '-> ']
-									   ifFalse:[stream nextPutAll: '   '].
-		somObject := self at: index.
-		self printStackElement: somObject atIndex: index on: stream ]! !
-
-!SOMFrame methodsFor: 'accessing'!
-arguments
-
-	^ (1 to: self somMethod numberOfArguments) collect: [ :argIndex |
-			self argumentAtIndex: argIndex contextLevel: 1
-		]! !
-
-!SOMFrame methodsFor: 'accessing'!
-bytecodeIndex
-	^ bytecodeIndex! !
-
-!SOMFrame methodsFor: 'accessing'!
-bytecodeIndex: anObject
-	bytecodeIndex := anObject! !
-
-!SOMFrame methodsFor: 'accessing'!
-localOffset
-	^ localOffset! !
-
-!SOMFrame methodsFor: 'accessing'!
-localOffset: anObject
-	localOffset := anObject! !
-
-!SOMFrame methodsFor: 'accessing'!
-outerContext
-	| currentContext |
-	currentContext := self.
-	[ currentContext hasContext ] whileTrue: [ currentContext := currentContext somContext ].
-	^ currentContext! !
-
-!SOMFrame methodsFor: 'accessing'!
-setDefaultClass! !
-
-!SOMFrame methodsFor: 'accessing'!
-somContext
-	^ somContext! !
-
-!SOMFrame methodsFor: 'accessing'!
-somContext: anObject 
-	somContext := anObject! !
-
-!SOMFrame methodsFor: 'accessing'!
-somCurrentObject
-	self somMethod somSignature = self universe globalNil
-		ifTrue: [^ self universe globalNil].
-	self somMethod numberOfArguments = 0
-		ifTrue: [^ self universe globalNil].
-	^ self argumentAtIndex: 1 contextLevel: 1! !
-
-!SOMFrame methodsFor: 'accessing'!
-somMethod
-	^ somMethod! !
-
-!SOMFrame methodsFor: 'accessing'!
-somMethod: anObject 
-	somMethod := anObject! !
-
-!SOMFrame methodsFor: 'accessing'!
-somPreviousFrame
-	^ somPreviousFrame! !
-
-!SOMFrame methodsFor: 'accessing'!
-somPreviousFrame: anObject 
-	somPreviousFrame := anObject! !
-
-!SOMFrame methodsFor: 'accessing'!
-stackPointer
-	^ stackPointer! !
-
-!SOMFrame methodsFor: 'accessing'!
-stackPointer: anObject
-	stackPointer := anObject! !
-
-!SOMBlock methodsFor: 'primitives'!
-primrestart
-	universe interpreter somFrame
-		bytecodeIndex: 1;
-		resetStackPointer! !
-
-!SOMBlock methodsFor: 'accessing'!
-cacheEvaluationMethodWithParameters: numParams 
-	| signature replaceIndex evaluationMethod |
-	signature := self evaluationMethodWithParameters: numParams.
-
-	"check if block class already has an evaluationMethod for the given parameter"
-	evaluationMethod := self somClass lookupInvokable: signature.
-	evaluationMethod class = SOMBlockEvaluation ifTrue: [ ^ self ].
-
-	"add to instance methods or replace existing primitives"
-	evaluationMethod ifNotNil: 
-		[ replaceIndex := self somClass somInstanceInvokables indexOf: evaluationMethod ].
-	evaluationMethod := self createEvalutationMethodWithParameters: numParams.
-	replaceIndex ifNil: [ ^ self somClass somInstanceInvokables add: evaluationMethod ].
-	self somClass somInstanceInvokables 
-		at: replaceIndex
-		put: evaluationMethod! !
-
-!SOMBlock methodsFor: 'accessing'!
-createEvalutationMethodWithParameters: numParams 
-	^ (SOMBlockEvaluation inUniverse: self universe)
-		somSignature: (universe newSymbol: (self evaluationMethodWithParameters: numParams));
-		numberOfArguments: numParams;
-		yourself! !
-
-!SOMBlock methodsFor: 'accessing'!
-evaluationMethodWithParameters: numParams
-	numParams = 0 ifTrue: [^ #value].
-	"append with: for each parameter except the first"
-	^ (2 to: numParams) inject: #value: into: [ :sig :each | sig, #with:]
-	! !
-
-!SOMBlock methodsFor: 'accessing'!
-setDefaultClass
-	"NO-OP, is set explicitly on object creation"! !
-
-!SOMBlock methodsFor: 'accessing'!
-somBlockMethod
-	^ somBlockMethod! !
-
-!SOMBlock methodsFor: 'accessing'!
-somBlockMethod: anObject 
-	somBlockMethod := anObject.
-	self cacheEvaluationMethodWithParameters: anObject numberOfArguments! !
-
-!SOMBlock methodsFor: 'accessing'!
-somContext
-	^ somContext! !
-
-!SOMBlock methodsFor: 'accessing'!
-somContext: anObject 
-	somContext := anObject! !
-
-!SOMClass methodsFor: 'accessing'!
-allInstanceFields
-
-	^ self somInstanceFields elements collect: [:ea | ea string].
-! !
-
-!SOMClass methodsFor: 'accessing'!
-indexOfInstanceField: aSOMSymbol 
-
-	^ self somInstanceFields indexOf: aSOMSymbol.
-! !
-
-!SOMClass methodsFor: 'accessing'!
-numberOfInstanceFields
-	^ self somInstanceFields size! !
-
-!SOMClass methodsFor: 'accessing'!
-primfields
-	^ somInstanceFields! !
-
-!SOMClass methodsFor: 'accessing'!
-somInstanceFields
-	^ somInstanceFields! !
-
-!SOMClass methodsFor: 'accessing'!
-somInstanceFields: anObject 
-	somInstanceFields := anObject! !
-
-!SOMClass methodsFor: 'accessing'!
-somInstanceInvokables
-	^ somInstanceInvokables! !
-
-!SOMClass methodsFor: 'accessing'!
-somInstanceInvokables: aSomArray 
-	somInstanceInvokables := aSomArray.
-	somInstanceInvokables do: [ :invokable | invokable somHolder: self ]! !
-
-!SOMClass methodsFor: 'accessing'!
-somName
-	^ somName! !
-
-!SOMClass methodsFor: 'accessing'!
-somName: anObject 
-	somName := anObject! !
-
-!SOMClass methodsFor: 'accessing'!
-somSuperClass
-	^ somSuperClass! !
-
-!SOMClass methodsFor: 'accessing'!
-somSuperClass: anObject 
-	somSuperClass := anObject! !
-
-!SOMClass methodsFor: 'accessing'!
-squeakClass
-	"We currently look up the required squeak class at runtime. This could be optimized by
-	storing it in an instance field. Implementing this has been deferred, as it is currently not possible to add instance fields to SOMObject subclasses that are not automatically mapped to SOM fields."
-	^ Smalltalk 
-		at: ('SOM' , self somName string) asSymbol
-		ifAbsent: [ self somSuperClass squeakClass ]! !
-
-!SOMClass methodsFor: 'as yet unclassified'!
-lookupInvokable: signature
-	
-	^ self somInstanceInvokables elements 
-		detect: [:invokable | invokable somSignature symbol == signature]
-		ifNone: [self hasSuperClass
-			ifTrue: [self somSuperClass lookupInvokable: signature]
-			ifFalse: [nil]]! !
-
-!SOMClass methodsFor: 'as yet unclassified'!
-performPrimitive: selector withArguments: arguments
-
-	"If self is of kind SOMClass, primitives might either be instance primitives of SOMClass or class side primitives of the corresponding class. This dispatch is currently made during invocation.
-	This is extremely unsexy code. Class primitives might need access to the universe or the class. Currently class primitives are implemented on the class side of SOMObject subclasses. As class methods do not have access to the universe this / the SOMClass object has to be passed in."
-	| class classSelector |
-	class := self squeakClass.
-	classSelector := (selector, #inSomClass:) asSymbol.
-	^ (class respondsTo: classSelector)
-		ifTrue: [class perform: classSelector withArguments: arguments, {self}.]
-		ifFalse:[self perform: selector withArguments: arguments].! !
-
-!SOMClass methodsFor: 'primitives'!
-primPositiveInfinity
-	^ universe newNumber: Float infinity! !
-
-!SOMClass methodsFor: 'primitives'!
-primfromString: aSOMString
-	| str |
-	str := aSOMString string.
-
-	(universe globalIntegerClass) = self ifTrue: [
-		^ SOMInteger inUniverse: universe
-						 new: (Integer readFrom: str) ].
-	
-	self assert: (universe globalDoubleClass) = self.
-	^ SOMDouble inUniverse: universe new: (Float readFrom: str)! !
-
-!SOMClass methodsFor: 'primitives'!
-primmethods
-	^ somInstanceInvokables! !
-
-!SOMClass methodsFor: 'primitives'!
-primname
-	^ somName! !
-
-!SOMClass methodsFor: 'primitives'!
-primnew
-	^ self squeakClass 
-		inUniverse: universe
-		withSomClass: self! !
-
-!SOMClass methodsFor: 'primitives'!
-primsuperclass
-	^ somSuperClass! !
-
-!SOMClass methodsFor: 'initialization'!
-initialize
-	super initialize.
-	somSuperClass := universe globalNil.
-	somInstanceFields := (SOMArray inUniverse: universe).
-	
-	self somInstanceInvokables: (SOMArray inUniverse: universe).
-	somName := (universe newString: '')! !
-
-!SOMClass methodsFor: 'testing'!
-hasSuperClass
-
-	^ somSuperClass isClass! !
-
-!SOMClass methodsFor: 'testing'!
-isClass
-
-	^ true! !
-
-!SOMClass class methodsFor: 'instance creation'!
-inUniverse: universe withSomSuperClass: superClazz
-
-	| metaclass superMeta |
-	"metaclass"
-	superMeta := superClazz isClass
-		ifTrue: [superClazz somClass]
-		ifFalse: [universe globalClassClass].
-	metaclass := (self inUniverse: universe)
-		somClass: (universe globalMetaclassClass);
-		somSuperClass: superMeta;
-		yourself.
-	"class"
-	^ (self inUniverse: universe)
-		somSuperClass: superClazz;
-		somClass: metaclass;
-		yourself.! !
 
 !SOMObject methodsFor: 'primitives'!
 primEqualEqual: otherObject 
@@ -1141,14 +522,632 @@ new
 somName
 	^ (self name allButFirst: 3) asSymbol! !
 
-!SOMInvokable methodsFor: 'invoking'!
-invokeInFrame: frame
-	self subclassResponsibility.! !
+!SOMArray methodsFor: 'accessing'!
+at: index
+	^ self indexableFields at: index! !
 
-!SOMInvokable methodsFor: 'initialization'!
+!SOMArray methodsFor: 'accessing'!
+at: index put: object
+	^ self indexableFields at: index put: object! !
+
+!SOMArray methodsFor: 'accessing'!
+elements
+	^ self indexableFields! !
+
+!SOMArray methodsFor: 'accessing'!
+indexOf: element 
+	^ self indexableFields indexOf: element! !
+
+!SOMArray methodsFor: 'accessing'!
+size
+	^ self indexableFields size! !
+
+!SOMArray methodsFor: 'accessing'!
+wipeIndexableFields
+	1 to: self elements size do: [ :i | self at: i put: universe globalNil ]! !
+
+!SOMArray methodsFor: 'copying'!
+copyFrom: fromIndex to: toIndex
+
+	^ self indexableFields copyFrom: fromIndex to: toIndex! !
+
+!SOMArray methodsFor: 'primitives'!
+primat: index
+
+	^ self at: index number.! !
+
+!SOMArray methodsFor: 'primitives'!
+primat: index put: object
+
+	^ self at: index number put: object.! !
+
+!SOMArray methodsFor: 'primitives'!
+primlength
+
+	^ universe newNumber: self size! !
+
+!SOMArray methodsFor: 'adding'!
+add: item
+	
+	self resize: self size + 1.
+	self at: self size put: item! !
+
+!SOMArray methodsFor: 'enumerating'!
+do: block
+
+	self indexableFields do: block! !
+
+!SOMArray methodsFor: 'enumerating'!
+withIndexDo: block
+	indexableFields withIndexDo: block! !
+
+!SOMArray methodsFor: 'resizing'!
+resize: newSize
+	newSize < self size
+		ifTrue: [self indexableFields: (self indexableFields copyFrom: 1 to: newSize)]
+		ifFalse: [self indexableFields: (self indexableFields, (Array new: newSize - self size))]! !
+
+!SOMArray class methodsFor: 'as yet unclassified'!
+inUniverse: universe size: size
+
+	^ self
+		inUniverse: universe
+		withNumberOfAdditionalFields: 0
+		withNumberOfIndexableFields: size! !
+
+!SOMArray class methodsFor: 'as yet unclassified'!
+inUniverse: universe withAll: squeakColl
+
+	| result |
+	result := self inUniverse: universe size: squeakColl size.
+	squeakColl withIndexDo: [:each :i | result at: i put: each].
+	^ result! !
+
+!SOMArray class methodsFor: 'primitives'!
+primnew: size inSomClass: somClass
+	^ self 
+		inUniverse: somClass universe
+		size: size number! !
+
+!SOMFrame methodsFor: 'printing'!
+printBytecodes
+
+	self printBytecodesOn: Transcript.
+	Transcript endEntry! !
+
+!SOMFrame methodsFor: 'printing'!
+printBytecodesOn: stream
+
+	"prints value of stack pointer and the current bytecodes"
+	stream
+		nextPutAll: 'Method: ';
+		nextPutAll: self somMethod asString.
+	self somMethod numberOfArguments > 0 ifTrue: [
+		stream
+			nextPutAll: ' in object: ';
+			nextPutAll: (self argumentAtIndex: 1 contextLevel: 1) asString].
+	stream lf.
+	self somMethod bytecodes doWithIndex: [:bc :index |
+		index = (self bytecodeIndex - 1) ifTrue: [stream nextPutAll: '->'].
+		stream nextPutAll: bc asString; lf.
+	]! !
+
+!SOMFrame methodsFor: 'printing'!
+printStack
+	
+	self printStackOn: Transcript.
+	Transcript endEntry.! !
+
+!SOMFrame methodsFor: 'printing'!
+printStackElement: somObject atIndex: index on: stream 
+	
+	| somNil somClazz |
+	stream
+		nextPutAll: '[';
+		nextPutAll: index asString;
+		nextPutAll: '] '.
+		
+	index <= self somMethod numberOfArguments 
+		ifTrue: [stream nextPutAll: '(arg '; nextPutAll: index asString; nextPutAll: ') '].
+	((index > self somMethod numberOfArguments) and: [index <= (self somMethod numberOfLocals + self somMethod numberOfArguments)])
+		ifTrue: [stream nextPutAll: '(local '; nextPutAll: (index - self somMethod numberOfArguments) asString; nextPutAll: ') '].
+			
+	somNil := self universe globalNil.
+	(somObject isNil or: [ somObject == somNil ]) ifTrue: 
+		[ stream
+			nextPutAll: 'nil';
+			lf.
+		^ self ].
+	somClazz := [somObject somClass] on: Error do: [somObject].
+	(somClazz isNil or: [ somClazz == somNil ]) ifTrue: 
+		[ stream
+			nextPutAll: 'object without class';
+			lf.
+		^ self ].
+	stream
+		nextPutAll: somObject asString;
+		nextPutAll: ' with class: ';
+		nextPutAll: somClazz asString;
+		lf! !
+
+!SOMFrame methodsFor: 'printing'!
+printStackOn: stream
+	"prints value of stack pointer and the content of each stack slot"
+
+	stream nextPutAll: '    Method: ';
+		nextPutAll: self somMethod asString;
+		lf;
+		nextPutAll: '    Stackpointer: ';
+		nextPutAll: self stackPointer asString;
+		lf.
+	
+	self stackPointer to: 1 by: -1 do:
+		[ :index |
+		| somObject |
+		index = self stackPointer ifTrue: [stream nextPutAll: '-> ']
+									   ifFalse:[stream nextPutAll: '   '].
+		somObject := self at: index.
+		self printStackElement: somObject atIndex: index on: stream ]! !
+
+!SOMFrame methodsFor: 'copying'!
+copyArgumentsFrom: oldFrame
+
+	| numArgs |
+	numArgs := self somMethod numberOfArguments.
+	1 to: numArgs do: [:argIndex |
+		self 
+			at: argIndex
+			put: (oldFrame stackElementAtIndex: numArgs - argIndex + 1)].! !
+
+!SOMFrame methodsFor: 'debugging'!
+installStep
+
+	| stepBytecodeIndex |
+	"find next send or popLocal"
+	stepBytecodeIndex := (bytecodeIndex to: self somMethod bytecodes size)
+		detect: [:index |
+			{SOMBCSend. SOMBCSuperSend. SOMBCPopLocal. SOMBCReturnLocal. SOMBCReturnNonLocal} 
+				anySatisfy: [:bytecodeClass | 
+					(self somMethod bytecodeAt: index) isKindOf: bytecodeClass]]
+		ifNone: [
+			self somPreviousFrame ~= universe globalNil
+				ifTrue: [self somPreviousFrame installStep].			
+			^ self ].
+		
+	self installStepBytecodeAt: stepBytecodeIndex.! !
+
+!SOMFrame methodsFor: 'debugging'!
+installStepBytecode
+
+	"find next bytecode or look in caller frame"
+	bytecodeIndex > self somMethod bytecodes size
+		ifTrue: [
+			self somPreviousFrame ~= universe globalNil
+				ifTrue: [self somPreviousFrame installStepBytecode].			
+			^ self ].
+		
+	self installStepBytecodeAt: bytecodeIndex! !
+
+!SOMFrame methodsFor: 'debugging'!
+installStepBytecodeAt: stepBytecodeIndex
+	"replace next bytecode with step bytecode"
+	
+	| bytecode stepBytecode |
+	bytecode := self somMethod bytecodeAt: stepBytecodeIndex.
+	bytecode ifKindOf: SOMBCStep thenDo: [^ bytecode owningFrames add: self].
+	stepBytecode := (SOMBCStep new)
+		originalBytecode: bytecode;
+		owningFrames: {self} asSet;
+		yourself.
+	self somMethod bytecodeAt: stepBytecodeIndex put: stepBytecode! !
+
+!SOMFrame methodsFor: 'testing'!
+hasContext
+	^ self somContext ~= self universe globalNil! !
+
+!SOMFrame methodsFor: 'testing'!
+hasPreviousFrame
+	
+	^ self somPreviousFrame ~~ self universe globalNil! !
+
+!SOMFrame methodsFor: 'testing'!
+isBootstrapFrame
+	^ self hasPreviousFrame not! !
+
+!SOMFrame methodsFor: 'stack manipulation'!
+pop
+
+	| oldPosition |
+	oldPosition := self stackPointer.
+	oldPosition <= (self somMethod numberOfLocals + self somMethod numberOfArguments) 
+		ifTrue: [self error: 'Stack is empty'].
+	self stackPointer: oldPosition - 1.
+	^ self at: oldPosition! !
+
+!SOMFrame methodsFor: 'stack manipulation'!
+popN: numOfElements
+
+	| oldPosition |
+	numOfElements = 0 ifTrue: [^ {}].
+	oldPosition := self stackPointer.
+	oldPosition < (self somMethod numberOfLocals + self somMethod numberOfArguments + numOfElements) 
+		ifTrue: [self error: 'Stack is empty'].
+	self stackPointer: oldPosition - numOfElements.
+	^ self copyFrom: oldPosition - numOfElements + 1 to: oldPosition! !
+
+!SOMFrame methodsFor: 'stack manipulation'!
+push: object
+
+	self stackPointer: self stackPointer + 1.
+	self at: self stackPointer put: object.! !
+
+!SOMFrame methodsFor: 'stack manipulation'!
+removeN: numOfElements
+
+	| oldPosition |
+	numOfElements = 0 ifTrue: [^ self].
+	oldPosition := self stackPointer.
+	oldPosition < (self somMethod numberOfLocals + self somMethod numberOfArguments + numOfElements) 
+		ifTrue: [self error: 'Stack is empty'].
+	self stackPointer: oldPosition - numOfElements.! !
+
+!SOMFrame methodsFor: 'initialization'!
+initialize
+	somContext := universe globalNil.
+	self localOffset: 0.
+	self bytecodeIndex: 0.
+	self stackPointer: 0.
+	self clearPreviousFrame! !
+
+!SOMFrame methodsFor: 'initialization'!
+resetStackPointer
+	self localOffset: 
+		(self somMethod numberOfArguments).
+	self stackPointer: 
+		(self somMethod numberOfLocals + self somMethod numberOfArguments) ! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+argumentAtIndex: index contextLevel: level
+
+	| contextFrame |
+	contextFrame := self frameAtContextLevel: level.
+	
+	index > contextFrame somMethod numberOfArguments
+		ifTrue: [self error: 'index > #args'].
+		
+	^ contextFrame at: index! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+argumentAtIndex: index contextLevel: level put: object
+	| contextFrame |
+	contextFrame := self frameAtContextLevel: level.
+	
+	index > contextFrame somMethod numberOfArguments 
+		ifTrue: [self error: 'index > #args'].
+		
+	(self frameAtContextLevel: level)
+		at: index put: object! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+clearPreviousFrame
+	self somPreviousFrame: self universe globalNil! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+frameAtContextLevel: level 
+	| frame |
+	frame := self.
+	level - 1 timesRepeat: [ frame := frame somContext ].
+	^ frame! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+localAtIndex: index contextLevel: level
+	|contextFrame|
+	contextFrame := self frameAtContextLevel: level.
+	^ contextFrame at: (contextFrame localOffset + index)! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+localAtIndex: index contextLevel: level put: object
+	|contextFrame|
+	contextFrame := self frameAtContextLevel: level.
+	contextFrame at: (contextFrame localOffset + index) put: object! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+remainingStackSize
+	^ self numberOfIndexableFields - self stackPointer! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+stackElementAtIndex: index
+	^ self at: (self stackPointer - index + 1) ! !
+
+!SOMFrame methodsFor: 'as yet unclassified'!
+stackElementAtIndex: index put: object
+	self at: (self stackPointer - index + 1) 
+		put: object! !
+
+!SOMFrame methodsFor: 'accessing'!
+arguments
+
+	^ (1 to: self somMethod numberOfArguments) collect: [ :argIndex |
+			self argumentAtIndex: argIndex contextLevel: 1
+		]! !
+
+!SOMFrame methodsFor: 'accessing'!
+bytecodeIndex
+	^ bytecodeIndex! !
+
+!SOMFrame methodsFor: 'accessing'!
+bytecodeIndex: anObject
+	bytecodeIndex := anObject! !
+
+!SOMFrame methodsFor: 'accessing'!
+localOffset
+	^ localOffset! !
+
+!SOMFrame methodsFor: 'accessing'!
+localOffset: anObject
+	localOffset := anObject! !
+
+!SOMFrame methodsFor: 'accessing'!
+outerContext
+	| currentContext |
+	currentContext := self.
+	[ currentContext hasContext ] whileTrue: [ currentContext := currentContext somContext ].
+	^ currentContext! !
+
+!SOMFrame methodsFor: 'accessing'!
+setDefaultClass! !
+
+!SOMFrame methodsFor: 'accessing'!
+somContext
+	^ somContext! !
+
+!SOMFrame methodsFor: 'accessing'!
+somContext: anObject 
+	somContext := anObject! !
+
+!SOMFrame methodsFor: 'accessing'!
+somCurrentObject
+	self somMethod somSignature = self universe globalNil
+		ifTrue: [^ self universe globalNil].
+	self somMethod numberOfArguments = 0
+		ifTrue: [^ self universe globalNil].
+	^ self argumentAtIndex: 1 contextLevel: 1! !
+
+!SOMFrame methodsFor: 'accessing'!
+somMethod
+	^ somMethod! !
+
+!SOMFrame methodsFor: 'accessing'!
+somMethod: anObject 
+	somMethod := anObject! !
+
+!SOMFrame methodsFor: 'accessing'!
+somPreviousFrame
+	^ somPreviousFrame! !
+
+!SOMFrame methodsFor: 'accessing'!
+somPreviousFrame: anObject 
+	somPreviousFrame := anObject! !
+
+!SOMFrame methodsFor: 'accessing'!
+stackPointer
+	^ stackPointer! !
+
+!SOMFrame methodsFor: 'accessing'!
+stackPointer: anObject
+	stackPointer := anObject! !
+
+!SOMBlock methodsFor: 'primitives'!
+primrestart
+	universe interpreter somFrame
+		bytecodeIndex: 1;
+		resetStackPointer! !
+
+!SOMBlock methodsFor: 'accessing'!
+cacheEvaluationMethodWithParameters: numParams 
+	| signature replaceIndex evaluationMethod |
+	signature := self evaluationMethodWithParameters: numParams.
+
+	"check if block class already has an evaluationMethod for the given parameter"
+	evaluationMethod := self somClass lookupInvokable: signature.
+	evaluationMethod class = SOMBlockEvaluation ifTrue: [ ^ self ].
+
+	"add to instance methods or replace existing primitives"
+	evaluationMethod ifNotNil: 
+		[ replaceIndex := self somClass somInstanceInvokables indexOf: evaluationMethod ].
+	evaluationMethod := self createEvalutationMethodWithParameters: numParams.
+	replaceIndex ifNil: [ ^ self somClass somInstanceInvokables add: evaluationMethod ].
+	self somClass somInstanceInvokables 
+		at: replaceIndex
+		put: evaluationMethod! !
+
+!SOMBlock methodsFor: 'accessing'!
+createEvalutationMethodWithParameters: numParams 
+	^ (SOMBlockEvaluation inUniverse: self universe)
+		somSignature: (universe newSymbol: (self evaluationMethodWithParameters: numParams));
+		numberOfArguments: numParams;
+		yourself! !
+
+!SOMBlock methodsFor: 'accessing'!
+evaluationMethodWithParameters: numParams
+	numParams = 0 ifTrue: [^ #value].
+	"append with: for each parameter except the first"
+	^ (2 to: numParams) inject: #value: into: [ :sig :each | sig, #with:]
+	! !
+
+!SOMBlock methodsFor: 'accessing'!
+setDefaultClass
+	"NO-OP, is set explicitly on object creation"! !
+
+!SOMBlock methodsFor: 'accessing'!
+somBlockMethod
+	^ somBlockMethod! !
+
+!SOMBlock methodsFor: 'accessing'!
+somBlockMethod: anObject 
+	somBlockMethod := anObject.
+	self cacheEvaluationMethodWithParameters: anObject numberOfArguments! !
+
+!SOMBlock methodsFor: 'accessing'!
+somContext
+	^ somContext! !
+
+!SOMBlock methodsFor: 'accessing'!
+somContext: anObject 
+	somContext := anObject! !
+
+!SOMClass methodsFor: 'accessing'!
+allInstanceFields
+
+	^ self somInstanceFields elements collect: [:ea | ea string].
+! !
+
+!SOMClass methodsFor: 'accessing'!
+indexOfInstanceField: aSOMSymbol 
+
+	^ self somInstanceFields indexOf: aSOMSymbol.
+! !
+
+!SOMClass methodsFor: 'accessing'!
+numberOfInstanceFields
+	^ self somInstanceFields size! !
+
+!SOMClass methodsFor: 'accessing'!
+primfields
+	^ somInstanceFields! !
+
+!SOMClass methodsFor: 'accessing'!
+somInstanceFields
+	^ somInstanceFields! !
+
+!SOMClass methodsFor: 'accessing'!
+somInstanceFields: anObject 
+	somInstanceFields := anObject! !
+
+!SOMClass methodsFor: 'accessing'!
+somInstanceInvokables
+	^ somInstanceInvokables! !
+
+!SOMClass methodsFor: 'accessing'!
+somInstanceInvokables: aSomArray 
+	somInstanceInvokables := aSomArray.
+	somInstanceInvokables do: [ :invokable | invokable somHolder: self ]! !
+
+!SOMClass methodsFor: 'accessing'!
+somName
+	^ somName! !
+
+!SOMClass methodsFor: 'accessing'!
+somName: anObject 
+	somName := anObject! !
+
+!SOMClass methodsFor: 'accessing'!
+somSuperClass
+	^ somSuperClass! !
+
+!SOMClass methodsFor: 'accessing'!
+somSuperClass: anObject 
+	somSuperClass := anObject! !
+
+!SOMClass methodsFor: 'accessing'!
+squeakClass
+	"We currently look up the required squeak class at runtime. This could be optimized by
+	storing it in an instance field. Implementing this has been deferred, as it is currently not possible to add instance fields to SOMObject subclasses that are not automatically mapped to SOM fields."
+	^ Smalltalk 
+		at: ('SOM' , self somName string) asSymbol
+		ifAbsent: [ self somSuperClass squeakClass ]! !
+
+!SOMClass methodsFor: 'as yet unclassified'!
+lookupInvokable: signature
+	
+	^ self somInstanceInvokables elements 
+		detect: [:invokable | invokable somSignature symbol == signature]
+		ifNone: [self hasSuperClass
+			ifTrue: [self somSuperClass lookupInvokable: signature]
+			ifFalse: [nil]]! !
+
+!SOMClass methodsFor: 'as yet unclassified'!
+performPrimitive: selector withArguments: arguments
+
+	"If self is of kind SOMClass, primitives might either be instance primitives of SOMClass or class side primitives of the corresponding class. This dispatch is currently made during invocation.
+	This is extremely unsexy code. Class primitives might need access to the universe or the class. Currently class primitives are implemented on the class side of SOMObject subclasses. As class methods do not have access to the universe this / the SOMClass object has to be passed in."
+	| class classSelector |
+	class := self squeakClass.
+	classSelector := (selector, #inSomClass:) asSymbol.
+	^ (class respondsTo: classSelector)
+		ifTrue: [class perform: classSelector withArguments: arguments, {self}.]
+		ifFalse:[self perform: selector withArguments: arguments].! !
+
+!SOMClass methodsFor: 'primitives'!
+primPositiveInfinity
+	^ universe newNumber: Float infinity! !
+
+!SOMClass methodsFor: 'primitives' stamp: 'jpb 4/11/2020 13:13:44'!
+primfromString: aSOMString
+	| str |
+	str := aSOMString string.
+
+	(universe globalIntegerClass) = self ifTrue: [
+		^ SOMInteger inUniverse: universe
+						 new: (Integer readFrom: str readStream) ].
+	
+	self assert: (universe globalDoubleClass) = self.
+	^ SOMDouble inUniverse: universe new: (Float readFrom: str)! !
+
+!SOMClass methodsFor: 'primitives'!
+primmethods
+	^ somInstanceInvokables! !
+
+!SOMClass methodsFor: 'primitives'!
+primname
+	^ somName! !
+
+!SOMClass methodsFor: 'primitives'!
+primnew
+	^ self squeakClass 
+		inUniverse: universe
+		withSomClass: self! !
+
+!SOMClass methodsFor: 'primitives'!
+primsuperclass
+	^ somSuperClass! !
+
+!SOMClass methodsFor: 'initialization'!
 initialize
 	super initialize.
-	somNumberOfArguments := self universe newNumber: 0! !
+	somSuperClass := universe globalNil.
+	somInstanceFields := (SOMArray inUniverse: universe).
+	
+	self somInstanceInvokables: (SOMArray inUniverse: universe).
+	somName := (universe newString: '')! !
+
+!SOMClass methodsFor: 'testing'!
+hasSuperClass
+
+	^ somSuperClass isClass! !
+
+!SOMClass methodsFor: 'testing'!
+isClass
+
+	^ true! !
+
+!SOMClass class methodsFor: 'instance creation'!
+inUniverse: universe withSomSuperClass: superClazz
+
+	| metaclass superMeta |
+	"metaclass"
+	superMeta := superClazz isClass
+		ifTrue: [superClazz somClass]
+		ifFalse: [universe globalClassClass].
+	metaclass := (self inUniverse: universe)
+		somClass: (universe globalMetaclassClass);
+		somSuperClass: superMeta;
+		yourself.
+	"class"
+	^ (self inUniverse: universe)
+		somSuperClass: superClazz;
+		somClass: metaclass;
+		yourself.! !
 
 !SOMInvokable methodsFor: 'accessing'!
 numberOfArguments
@@ -1177,6 +1176,15 @@ somSignature
 !SOMInvokable methodsFor: 'accessing'!
 somSignature: anObject 
 	somSignature := anObject! !
+
+!SOMInvokable methodsFor: 'invoking'!
+invokeInFrame: frame
+	self subclassResponsibility.! !
+
+!SOMInvokable methodsFor: 'initialization'!
+initialize
+	super initialize.
+	somNumberOfArguments := self universe newNumber: 0! !
 
 !SOMInvokable class methodsFor: 'instance creation'!
 inUniverse: universe named: squeakSymbol numArgs: numArgs 
@@ -1494,9 +1502,9 @@ primasInteger
 primcos
 	^ universe newNumber: self number cos! !
 
-!SOMDouble methodsFor: 'primitives'!
+!SOMDouble methodsFor: 'primitives' stamp: 'jpb 4/11/2020 13:14:27'!
 primround
-	^ universe newNumber: (self number round: 0)! !
+	^ universe newNumber: (self number rounded)! !
 
 !SOMDouble methodsFor: 'primitives'!
 primsin
@@ -1608,6 +1616,15 @@ primprimSubstringFrom: start to: end
 	^ self universe newString: 
 		(self string copyFrom: start number to: end number)! !
 
+!SOMString methodsFor: 'as yet unclassified' stamp: 'jpb 4/11/2020 15:19:25'!
+primisWhiteSpace
+	| spaces |
+	spaces _ #(10 32 9 13).
+	
+	string do: [:char | (spaces includes: char asciiValue) ifTrue: [ ^true ] ].
+	
+	^false.! !
+
 !SOMString class methodsFor: 'instance creation'!
 inUniverse: universe string: string
 
@@ -1681,10 +1698,10 @@ primload: clazzName
 		ifNil: [self universe globalNil]
 		ifNotNil: [loadedClazz].! !
 
-!SOMSystem methodsFor: 'primitives'!
+!SOMSystem methodsFor: 'primitives' stamp: 'jpb 4/11/2020 11:05:17'!
 primprintNewline
 	
-	self universe outStream lf; flush.! !
+	self universe outStream newLine; flush.! !
 
 !SOMSystem methodsFor: 'primitives'!
 primprintString: somString
@@ -1693,10 +1710,10 @@ primprintString: somString
 		nextPutAll: somString string;
 		flush.! !
 
-!SOMSystem methodsFor: 'primitives'!
+!SOMSystem methodsFor: 'primitives' stamp: 'jpb 4/11/2020 13:18:56'!
 primticks
 	
-	^ universe newNumber: Time primUTCMicrosecondsClock! !
+	^ universe newNumber: Time primUtcMicrosecondClock! !
 
 !SOMSystem methodsFor: 'primitives'!
 primtime

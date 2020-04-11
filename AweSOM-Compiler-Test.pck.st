@@ -1,6 +1,13 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:41 pm'!
-'Description '!
-!provides: 'AweSOM-Compiler-Test' 1 0!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:19:02 pm'!
+'Description The compiler test package of the AweSOM (Simple object machine) implementation.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-Compiler-Test' 1 2!
+!requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-Test' 1 0 nil!
+!requires: 'AweSOM-Compiler' 1 4 nil!
+!requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: #'AweSOM-Compiler-Test'!
 
 
@@ -385,6 +392,21 @@ test07AccessInstanceVars
 	self assert: (bc first isKindOf: SOMBCPushField).
 	self assert: (bc second isKindOf: SOMBCReturnLocal).! !
 
+!ParseBytecodeTest methodsFor: 'running'!
+setUpParser: source andApply: rule
+
+	super setUpParser: source andApply: rule.
+	(result respondsTo: #bytecode) ifTrue: [
+		bytecode := result bytecode]! !
+
+!ParseBytecodeTest methodsFor: 'running'!
+setUpParser: source withMgencAndApply: rule
+
+	self setUpParser: source.
+	result := parser apply: rule.
+	(result respondsTo: #bytecode) ifTrue: [
+		bytecode := result bytecode]! !
+
 !ParseBytecodeTest methodsFor: 'as yet unclassified'!
 setUpParser: source
 
@@ -742,21 +764,6 @@ test29do
 	self assertBcAt: 5 is: SOMBCSend.
 	self assertBcAt: 6 is: SOMBCReturnLocal.! !
 
-!ParseBytecodeTest methodsFor: 'running'!
-setUpParser: source andApply: rule
-
-	super setUpParser: source andApply: rule.
-	(result respondsTo: #bytecode) ifTrue: [
-		bytecode := result bytecode]! !
-
-!ParseBytecodeTest methodsFor: 'running'!
-setUpParser: source withMgencAndApply: rule
-
-	self setUpParser: source.
-	result := parser apply: rule.
-	(result respondsTo: #bytecode) ifTrue: [
-		bytecode := result bytecode]! !
-
 !ParseBytecodeTest methodsFor: 'assertion'!
 assertBcAt: idx is: bcType
 
@@ -962,6 +969,14 @@ test02parseObject
 	parser cgenc.
 	"self halt."! !
 
+!ParseMethodTest methodsFor: 'running'!
+setUpParser: source
+
+	super setUpParser: source.
+	parser
+		"fakeMgenc;"
+		fakeCgenc.! !
+
 !ParseMethodTest methodsFor: 'tests'!
 test01SimpleMethodDef
 
@@ -1066,14 +1081,6 @@ test12SimpleOperatorMethodDef
 	self assert: result arguments size  		equals: 2.
 	self assert: result arguments first 		equals: #self.
 	self assert: result arguments second 	equals: #bool.! !
-
-!ParseMethodTest methodsFor: 'running'!
-setUpParser: source
-
-	super setUpParser: source.
-	parser
-		"fakeMgenc;"
-		fakeCgenc.! !
 
 !SOMLexerTest methodsFor: 'tests'!
 testIsOperator

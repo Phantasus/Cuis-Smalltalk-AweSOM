@@ -1,8 +1,13 @@
-'From Cuis 5.0 [latest update: #4103] on 10 April 2020 at 10:05:39 pm'!
-'Description '!
-!provides: 'AweSOM-Compiler' 1 0!
-SystemOrganization addCategory: #'AweSOM-Compiler'!
+'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:19:00 pm'!
+'Description The compiler package of the AweSOM (Simple object machine) implementation.
+
+Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
+License: MIT'!
+!provides: 'AweSOM-Compiler' 1 4!
+!requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: #'AweSOM-Compiler-Test'!
+SystemOrganization addCategory: #'AweSOM-Compiler'!
 
 
 !classDefinition: #SOMParseError category: #'AweSOM-Compiler'!
@@ -190,7 +195,7 @@ printOn: stream
 		nextPutAll: self signature;
 		nextPut: $>.! !
 
-!SOMParseError methodsFor: 'signalling'!
+!SOMParseError methodsFor: 'signalling' stamp: 'jpb 4/11/2020 12:13:23'!
 signalWith: message expectedSym: aSym and: parser
 	| msg |
 	line   := parser currentLineNumber.
@@ -200,8 +205,8 @@ signalWith: message expectedSym: aSym and: parser
    foundSym := parser sym.
    expectedSym := aSym.
 
-	msg := ('<3p>:<4p>:<5p>: error: ', message)
-					expandMacrosWithArguments: { expectedSym. foundSym. fileName. line. column }.
+	msg := ('{3}:{4}:{5}: error: ', message)
+				format: { expectedSym. foundSym. fileName. line. column }.
 
 	^ self signal: msg, text! !
 
@@ -504,6 +509,21 @@ test07AccessInstanceVars
 	bc := mgenc bytecode.
 	self assert: (bc first isKindOf: SOMBCPushField).
 	self assert: (bc second isKindOf: SOMBCReturnLocal).! !
+
+!ParseBytecodeTest methodsFor: 'running'!
+setUpParser: source andApply: rule
+
+	super setUpParser: source andApply: rule.
+	(result respondsTo: #bytecode) ifTrue: [
+		bytecode := result bytecode]! !
+
+!ParseBytecodeTest methodsFor: 'running'!
+setUpParser: source withMgencAndApply: rule
+
+	self setUpParser: source.
+	result := parser apply: rule.
+	(result respondsTo: #bytecode) ifTrue: [
+		bytecode := result bytecode]! !
 
 !ParseBytecodeTest methodsFor: 'as yet unclassified'!
 setUpParser: source
@@ -862,21 +882,6 @@ test29do
 	self assertBcAt: 5 is: SOMBCSend.
 	self assertBcAt: 6 is: SOMBCReturnLocal.! !
 
-!ParseBytecodeTest methodsFor: 'running'!
-setUpParser: source andApply: rule
-
-	super setUpParser: source andApply: rule.
-	(result respondsTo: #bytecode) ifTrue: [
-		bytecode := result bytecode]! !
-
-!ParseBytecodeTest methodsFor: 'running'!
-setUpParser: source withMgencAndApply: rule
-
-	self setUpParser: source.
-	result := parser apply: rule.
-	(result respondsTo: #bytecode) ifTrue: [
-		bytecode := result bytecode]! !
-
 !ParseBytecodeTest methodsFor: 'assertion'!
 assertBcAt: idx is: bcType
 
@@ -1082,6 +1087,14 @@ test02parseObject
 	parser cgenc.
 	"self halt."! !
 
+!ParseMethodTest methodsFor: 'running'!
+setUpParser: source
+
+	super setUpParser: source.
+	parser
+		"fakeMgenc;"
+		fakeCgenc.! !
+
 !ParseMethodTest methodsFor: 'tests'!
 test01SimpleMethodDef
 
@@ -1186,14 +1199,6 @@ test12SimpleOperatorMethodDef
 	self assert: result arguments size  		equals: 2.
 	self assert: result arguments first 		equals: #self.
 	self assert: result arguments second 	equals: #bool.! !
-
-!ParseMethodTest methodsFor: 'running'!
-setUpParser: source
-
-	super setUpParser: source.
-	parser
-		"fakeMgenc;"
-		fakeCgenc.! !
 
 !SOMLexerTest methodsFor: 'tests'!
 testIsOperator
@@ -1382,17 +1387,17 @@ classFileExtension
 
 	^ '.som'! !
 
-!SOMCompiler methodsFor: 'file access'!
+!SOMCompiler methodsFor: 'file access' stamp: 'jpb 4/11/2020 10:15:00'!
 sourceOfClassFile: className
 
 	| classFile theDir source stream |
 	classFile := className , self classFileExtension.
 	theDir := (self classPaths
-		collect: [:path | path asFileReference ])
-		detect: [:dir | (dir resolveString: classFile) exists ]
+		collect: [:path | path asDirectoryEntry ])
+		detect: [:dir | (dir // classFile) exists ]
 		ifNone: [^ nil].
 	"theDir ifNil: [self error: 'Cannot find class in classPath']."
-	stream := (theDir resolveString: classFile) readStream.
+	stream := (theDir // classFile) readStream.
 	source := stream contents.
 	stream close.
 	^ {source. classFile}! !
@@ -1499,7 +1504,7 @@ skipWhitespace
 			self readNext.
 			self readBufferIfEmpty: [^ self]]! !
 
-!SOMLexer methodsFor: 'helper'!
+!SOMLexer methodsFor: 'helper' stamp: 'jpb 4/10/2020 23:16:17'!
 skipWhitespaceAndCommentsOrEnd: atEndBlock
 	[	self hasMoreInput ifFalse: atEndBlock.
 		self skipWhitespace.
@@ -1553,7 +1558,7 @@ matchDigit
 
 	^ sym! !
 
-!SOMLexer methodsFor: 'lexing'!
+!SOMLexer methodsFor: 'lexing' stamp: 'jpb 4/11/2020 15:11:38'!
 matchEscapeChar
 	| cur |
 	cur := self currentChar.
@@ -1572,6 +1577,8 @@ matchEscapeChar
 		text nextPut: $'. ^ self ].
 	cur == $\ ifTrue: [
 		text nextPut: $\. ^ self ].
+	cur == $0 ifTrue: [
+		text nextPut:( Character asciiValue: 0). ^self ].
 	
 	Error signal: 'Found unsupported escape sequence. Current character: ', cur asString.	
 	
@@ -1855,6 +1862,26 @@ on: aReadStream
 	lexer := self new.
 	lexer stream: aReadStream.
 	^ lexer! !
+
+!SOMMethodGenerationContext methodsFor: 'printing'!
+bytecodeString
+
+	^ String streamContents: [:s |
+		self
+			bytecodeStringTab: 0
+			stream: s].! !
+
+!SOMMethodGenerationContext methodsFor: 'printing'!
+bytecodeStringTab: tabWidth stream: s
+
+	self bytecode do: [:ea |
+		tabWidth timesRepeat: [s tab].
+		ea printOn: s.
+		s cr.
+		(ea isKindOf: SOMBCPushBlock) ifTrue: [
+			(ea mgenc literals at: ea index) bytecodes first mgenc
+				bytecodeStringTab: tabWidth+1
+				stream: s.]].! !
 
 !SOMMethodGenerationContext methodsFor: 'accessing'!
 addArgumentIfAbsent: argName
@@ -2155,26 +2182,6 @@ combineSelectorAndArgs
 		collect: [:sig :arg | sig , ': ' , arg].
 	"Neeeeed join!!!!!!"
 	^ (parts inject: '' into: [:all :ea | all , ' ' , ea]) trimBoth.! !
-
-!SOMMethodGenerationContext methodsFor: 'printing'!
-bytecodeString
-
-	^ String streamContents: [:s |
-		self
-			bytecodeStringTab: 0
-			stream: s].! !
-
-!SOMMethodGenerationContext methodsFor: 'printing'!
-bytecodeStringTab: tabWidth stream: s
-
-	self bytecode do: [:ea |
-		tabWidth timesRepeat: [s tab].
-		ea printOn: s.
-		s cr.
-		(ea isKindOf: SOMBCPushBlock) ifTrue: [
-			(ea mgenc literals at: ea index) bytecodes first mgenc
-				bytecodeStringTab: tabWidth+1
-				stream: s.]].! !
 
 !SOMMethodGenerationContext methodsFor: 'stack size'!
 computeMaxStackDepth
