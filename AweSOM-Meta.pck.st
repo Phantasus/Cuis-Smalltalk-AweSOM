@@ -1,21 +1,21 @@
-'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:20:02 pm'!
+'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:01:31 pm'!
 'Description The base package of the AweSOM (Simple object machine) implementation,
 which contains shared base functionality.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Meta' 1 3!
+!provides: 'AweSOM-Meta' 1 5!
 !requires: 'Cuis-Base' 50 4103 nil!
-SystemOrganization addCategory: #'AweSOM-Meta'!
+SystemOrganization addCategory: 'AweSOM-Meta'!
 
 
-!classDefinition: #SOMTools category: #'AweSOM-Meta'!
+!classDefinition: #SOMTools category: 'AweSOM-Meta'!
 Object subclass: #SOMTools
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Meta'!
-!classDefinition: 'SOMTools class' category: #'AweSOM-Meta'!
+!classDefinition: 'SOMTools class' category: 'AweSOM-Meta'!
 SOMTools class
 	instanceVariableNames: 'basePath'!
 
@@ -51,6 +51,13 @@ basicSmalltalkClassPath
 	bp := self basePath.
 
 	^ { bp, '/Smalltalk' }! !
+
+!SOMTools class methodsFor: 'class path' stamp: 'jpb 2/17/2021 19:59:16'!
+findTestArgumentsByTest: aTest
+	^{'-cp'. 
+		self basePath , '/Smalltalk' , ':' , self basePath ,'/TestSuite'.
+		'TestHarness.som'.
+		aTest}.! !
 
 !SOMTools class methodsFor: 'class path'!
 setClassPathBase: aBasePath

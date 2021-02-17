@@ -1,162 +1,162 @@
-'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:19:00 pm'!
+'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:34:11 pm'!
 'Description The compiler package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Compiler' 1 4!
+!provides: 'AweSOM-Compiler' 1 8!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
-SystemOrganization addCategory: #'AweSOM-Compiler-Test'!
-SystemOrganization addCategory: #'AweSOM-Compiler'!
+SystemOrganization addCategory: 'AweSOM-Compiler-Test'!
+SystemOrganization addCategory: 'AweSOM-Compiler'!
 
 
-!classDefinition: #SOMParseError category: #'AweSOM-Compiler'!
+!classDefinition: #SOMParseError category: 'AweSOM-Compiler'!
 Error subclass: #SOMParseError
 	instanceVariableNames: 'line column text fileName foundSym expectedSym'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMParseError class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMParseError class' category: 'AweSOM-Compiler'!
 SOMParseError class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompileSOMClassTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #CompileSOMClassTest category: 'AweSOM-Compiler-Test'!
 TestCaseWithUniverse subclass: #CompileSOMClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'CompileSOMClassTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'CompileSOMClassTest class' category: 'AweSOM-Compiler-Test'!
 CompileSOMClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #CompileSOMMethodTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #CompileSOMMethodTest category: 'AweSOM-Compiler-Test'!
 TestCaseWithUniverse subclass: #CompileSOMMethodTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'CompileSOMMethodTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'CompileSOMMethodTest class' category: 'AweSOM-Compiler-Test'!
 CompileSOMMethodTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParseClassTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #ParseClassTest category: 'AweSOM-Compiler-Test'!
 TestCaseWithUniverse subclass: #ParseClassTest
 	instanceVariableNames: 'parser result'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'ParseClassTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'ParseClassTest class' category: 'AweSOM-Compiler-Test'!
 ParseClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParseBytecodeTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #ParseBytecodeTest category: 'AweSOM-Compiler-Test'!
 ParseClassTest subclass: #ParseBytecodeTest
 	instanceVariableNames: 'bytecode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'ParseBytecodeTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'ParseBytecodeTest class' category: 'AweSOM-Compiler-Test'!
 ParseBytecodeTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParseCompleteClassTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #ParseCompleteClassTest category: 'AweSOM-Compiler-Test'!
 ParseClassTest subclass: #ParseCompleteClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'ParseCompleteClassTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'ParseCompleteClassTest class' category: 'AweSOM-Compiler-Test'!
 ParseCompleteClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #ParseMethodTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #ParseMethodTest category: 'AweSOM-Compiler-Test'!
 ParseClassTest subclass: #ParseMethodTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'ParseMethodTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'ParseMethodTest class' category: 'AweSOM-Compiler-Test'!
 ParseMethodTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMLexerTest category: #'AweSOM-Compiler-Test'!
+!classDefinition: #SOMLexerTest category: 'AweSOM-Compiler-Test'!
 TestCaseWithUniverse subclass: #SOMLexerTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler-Test'!
-!classDefinition: 'SOMLexerTest class' category: #'AweSOM-Compiler-Test'!
+!classDefinition: 'SOMLexerTest class' category: 'AweSOM-Compiler-Test'!
 SOMLexerTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMClassGenerationContext category: #'AweSOM-Compiler'!
+!classDefinition: #SOMClassGenerationContext category: 'AweSOM-Compiler'!
 Object subclass: #SOMClassGenerationContext
 	instanceVariableNames: 'superName isClassSide instanceFields instanceMethods classFields classMethods theName'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMClassGenerationContext class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMClassGenerationContext class' category: 'AweSOM-Compiler'!
 SOMClassGenerationContext class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMCompiler category: #'AweSOM-Compiler'!
+!classDefinition: #SOMCompiler category: 'AweSOM-Compiler'!
 Object subclass: #SOMCompiler
 	instanceVariableNames: 'universe classPaths'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMCompiler class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMCompiler class' category: 'AweSOM-Compiler'!
 SOMCompiler class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMLexer category: #'AweSOM-Compiler'!
+!classDefinition: #SOMLexer category: 'AweSOM-Compiler'!
 Object subclass: #SOMLexer
 	instanceVariableNames: 'stream text nextText lineNumber peekDone sym nextSym symChr nextSymChr buf bufP'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMLexer class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMLexer class' category: 'AweSOM-Compiler'!
 SOMLexer class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMMethodGenerationContext category: #'AweSOM-Compiler'!
+!classDefinition: #SOMMethodGenerationContext category: 'AweSOM-Compiler'!
 Object subclass: #SOMMethodGenerationContext
 	instanceVariableNames: 'signature holder outer arguments isPrimitive onClassSide locals literals bytecode isFinished isBlock'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMMethodGenerationContext class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMMethodGenerationContext class' category: 'AweSOM-Compiler'!
 SOMMethodGenerationContext class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMParser category: #'AweSOM-Compiler'!
+!classDefinition: #SOMParser category: 'AweSOM-Compiler'!
 Object subclass: #SOMParser
 	instanceVariableNames: 'universe cgenc sym text lexer nextSym shouldReadSources fileName'
 	classVariableNames: 'BinaryOpSyms KeywordSelectorSyms SingleOpSyms'
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMParser class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMParser class' category: 'AweSOM-Compiler'!
 SOMParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMClassParser category: #'AweSOM-Compiler'!
+!classDefinition: #SOMClassParser category: 'AweSOM-Compiler'!
 SOMParser subclass: #SOMClassParser
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMClassParser class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMClassParser class' category: 'AweSOM-Compiler'!
 SOMClassParser class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMMethodParser category: #'AweSOM-Compiler'!
+!classDefinition: #SOMMethodParser category: 'AweSOM-Compiler'!
 SOMParser subclass: #SOMMethodParser
 	instanceVariableNames: 'mgenc'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
-!classDefinition: 'SOMMethodParser class' category: #'AweSOM-Compiler'!
+!classDefinition: 'SOMMethodParser class' category: 'AweSOM-Compiler'!
 SOMMethodParser class
 	instanceVariableNames: ''!
 
@@ -307,14 +307,16 @@ test06AssembleNormalClass
 	self assert: class somInstanceFields elements second string equals: 'b'.
 	self assert: class somInstanceInvokables size equals: 1.! !
 
-!CompileSOMClassTest methodsFor: 'tests'!
+!CompileSOMClassTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:33:15'!
 test07InternalClassHierarchyEqualsSomClassHierarchy
 
 	"This test is currently deactivated. It tests if the class
 	hierarchy of system classes is the same as in SOM. Currently
 	it isn't but there could be problems in the future because of this'"
+	| basePath |
+	basePath := SOMTools basePath.
 	universe := SOMUniverse new.
-	universe setupClasspath: 'Smalltalk:TestSuite:.'.
+	universe setupClasspath: basePath, '/Smalltalk:' , basePath , '/TestSuite:' , basePath.
 	universe initializeObjectSystem.
 
 	"self assertSuperClassOf: #Object is: #nil."
@@ -850,7 +852,7 @@ test28GlobalsTest
 	"self halt."
 	"self assertBcAt: 1 is: SOMBCPushConstant."! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 19:22:21'!
 test29do
 	| block |
 	self setUpParser: 'do: block = ( self doIndexes: [ :i | block value: (self at: i) ] )' andApply: #method.
@@ -866,7 +868,7 @@ test29do
 	self assertBcAt: 3 is: SOMBCSend.
 	self assert: (bytecode at: 3) index equals: 2.
 	self assert: (bytecode at: 3) literalValue equals: #doIndexes:.
-	self assert: (bytecode at: 3) literalValue class equals: ByteSymbol.
+	self assert: (bytecode at: 3) literalValue class equals: Symbol.
 	
 	self assertBcAt: 4 is: SOMBCPop.
 	self assertBcAt: 5 is: SOMBCPushArgument.
@@ -2774,10 +2776,10 @@ literalDouble
 	self expect: #double.
 	^ val! !
 
-!SOMMethodParser methodsFor: 'patterns'!
+!SOMMethodParser methodsFor: 'patterns' stamp: 'jpb 2/11/2021 22:12:09'!
 literalInteger
 	| val |
-	val := text contents asInteger.
+	val := text contents asNumber asInteger.
 	self expect: #integer.
 	^ val! !
 

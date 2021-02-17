@@ -1,162 +1,162 @@
-'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:20:53 pm'!
+'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:34:13 pm'!
 'Description The vm package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-VM' 1 4!
+!provides: 'AweSOM-VM' 1 9!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Meta' 1 3 nil!
-SystemOrganization addCategory: #'AweSOM-VM-Test'!
-SystemOrganization addCategory: #'AweSOM-VM'!
+SystemOrganization addCategory: 'AweSOM-VM-Test'!
+SystemOrganization addCategory: 'AweSOM-VM'!
 
 
-!classDefinition: #SOMSymbolTable category: #'AweSOM-VM'!
+!classDefinition: #SOMSymbolTable category: 'AweSOM-VM'!
 IdentityDictionary subclass: #SOMSymbolTable
 	instanceVariableNames: 'universe'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM'!
-!classDefinition: 'SOMSymbolTable class' category: #'AweSOM-VM'!
+!classDefinition: 'SOMSymbolTable class' category: 'AweSOM-VM'!
 SOMSymbolTable class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMClassTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMClassTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMClassTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMClassTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMClassTest class' category: 'AweSOM-VM-Test'!
 SOMClassTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMFrameTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMFrameTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMFrameTest
 	instanceVariableNames: 'frame frame2'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMFrameTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMFrameTest class' category: 'AweSOM-VM-Test'!
 SOMFrameTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMGlobalsTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMGlobalsTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMGlobalsTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMGlobalsTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMGlobalsTest class' category: 'AweSOM-VM-Test'!
 SOMGlobalsTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMInterpreterTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMInterpreterTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMInterpreterTest
 	instanceVariableNames: 'interpreter'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMInterpreterTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMInterpreterTest class' category: 'AweSOM-VM-Test'!
 SOMInterpreterTest class
 	instanceVariableNames: 'mgec callerFrame'!
 
-!classDefinition: #SOMMethodTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMMethodTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMMethodTest
 	instanceVariableNames: 'method'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMMethodTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMMethodTest class' category: 'AweSOM-VM-Test'!
 SOMMethodTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMNumberTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMNumberTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMNumberTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMNumberTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMNumberTest class' category: 'AweSOM-VM-Test'!
 SOMNumberTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMObjectTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMObjectTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMObjectTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMObjectTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMObjectTest class' category: 'AweSOM-VM-Test'!
 SOMObjectTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMFakeObjectTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMFakeObjectTest category: 'AweSOM-VM-Test'!
 SOMObjectTest subclass: #SOMFakeObjectTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMFakeObjectTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMFakeObjectTest class' category: 'AweSOM-VM-Test'!
 SOMFakeObjectTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMPrimitiveTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMPrimitiveTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMPrimitiveTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMPrimitiveTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMPrimitiveTest class' category: 'AweSOM-VM-Test'!
 SOMPrimitiveTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMUniverseTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMUniverseTest category: 'AweSOM-VM-Test'!
 TestCaseWithUniverse subclass: #SOMUniverseTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMUniverseTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMUniverseTest class' category: 'AweSOM-VM-Test'!
 SOMUniverseTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBasicInterpreterTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMBasicInterpreterTest category: 'AweSOM-VM-Test'!
 TestCase subclass: #SOMBasicInterpreterTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMBasicInterpreterTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMBasicInterpreterTest class' category: 'AweSOM-VM-Test'!
 SOMBasicInterpreterTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMTest category: #'AweSOM-VM-Test'!
+!classDefinition: #SOMTest category: 'AweSOM-VM-Test'!
 TestCase subclass: #SOMTest
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM-Test'!
-!classDefinition: 'SOMTest class' category: #'AweSOM-VM-Test'!
+!classDefinition: 'SOMTest class' category: 'AweSOM-VM-Test'!
 SOMTest class
 	instanceVariableNames: ''!
 
-!classDefinition: #HaltPrimData category: #'AweSOM-VM'!
+!classDefinition: #HaltPrimData category: 'AweSOM-VM'!
 Object subclass: #HaltPrimData
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-VM'!
-!classDefinition: 'HaltPrimData class' category: #'AweSOM-VM'!
+!classDefinition: 'HaltPrimData class' category: 'AweSOM-VM'!
 HaltPrimData class
 	instanceVariableNames: 'doBreak'!
 
-!classDefinition: #SOMUniverse category: #'AweSOM-VM'!
+!classDefinition: #SOMUniverse category: 'AweSOM-VM'!
 Object subclass: #SOMUniverse
 	instanceVariableNames: 'globals interpreter outStream symbolTable exitCode isInitialized somObjectClass somClassClass somMetaclassClass somNilClass somIntegerClass somArrayClass somMethodClass somSymbolClass somPrimitiveClass somStringClass somDoubleClass somBooleanClass somTrueObject somFalseObject somSystemObject somTrueClass somFalseClass somSystemClass somNilObject somBlockClass somBlockClasses'
 	classVariableNames: 'ClassPaths Default DefaultInterpreter'
 	poolDictionaries: ''
 	category: 'AweSOM-VM'!
-!classDefinition: 'SOMUniverse class' category: #'AweSOM-VM'!
+!classDefinition: 'SOMUniverse class' category: 'AweSOM-VM'!
 SOMUniverse class
 	instanceVariableNames: ''!
 
@@ -1086,7 +1086,7 @@ testHandleArguments
 	args := universe handleArguments: { 'Test.som'. '1'. '2'. '3' }.
 	self assert: args equals: { 'Test'. '1'. '2'. '3' }.! !
 
-!SOMBasicInterpreterTest methodsFor: 'asserting'!
+!SOMBasicInterpreterTest methodsFor: 'asserting' stamp: 'jpb 2/13/2021 19:22:39'!
 assert: actual equals: aValue as: aType
 	aType = #Integer ifTrue: [
 		self assert: actual number equals: aValue.
@@ -1104,7 +1104,7 @@ assert: actual equals: aValue as: aType
 		self assert: actual symbol equals: aValue.
 		^ self ].
 	
-	self fail: 'SOM Value handler missing for ', actual asString.
+	self error: 'SOM Value handler missing for ', actual asString.
 	
 	! !
 
@@ -1139,6 +1139,10 @@ testArrays4
 !SOMBasicInterpreterTest methodsFor: 'tests'!
 testArrays5
 	self load: 'Arrays' execute: 'testNewWithAll' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:24:23'!
+testBinaryOperation
+	self load: 'BinaryOperation' execute: 'test' expect: 11 as: #Integer! !
 
 !SOMBasicInterpreterTest methodsFor: 'tests'!
 testBlockInlining1
@@ -1207,6 +1211,18 @@ testBlocks3
 !SOMBasicInterpreterTest methodsFor: 'tests'!
 testBlocks4
 	self load: 'Blocks' execute: 'testArgAndContext' expect: 8 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:29:07'!
+testBlocks5
+	self load: 'Blocks' execute: 'testEmptyZeroArg' expect: 1 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:29:47'!
+testBlocks6
+	self load: 'Blocks' execute: 'testEmptyOneArg' expect: 1 as: #Integer.! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:30:09'!
+testBlocks7
+	self load: 'Blocks' execute: 'testEmptyTwoArg' expect: 1 as: #Integer.! !
 
 !SOMBasicInterpreterTest methodsFor: 'tests'!
 testCompilerSimplification1
@@ -1313,6 +1329,14 @@ testRegressions1
 testRegressions2
 	self load: 'Regressions' execute: 'testSymbolReferenceEquality' expect: 1 as: #Integer! !
 
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:26:44'!
+testRegressions3
+	self load: 'Regressions' execute: 'testUninitializedLocal' expect: 1 as: #Integer! !
+
+!SOMBasicInterpreterTest methodsFor: 'tests' stamp: 'jpb 2/17/2021 20:26:58'!
+testRegressions4
+	self load: 'Regressions' execute: 'testUninitializedLocalInBlock' expect: 1 as: #Integer! !
+
 !SOMBasicInterpreterTest methodsFor: 'tests'!
 testReturn1
 	self load: 'Return' execute: 'testReturnSelf' expect: 'Return' as: #Class! !
@@ -1337,11 +1361,11 @@ testSelfTestAssignSelf
 testSelfTestAssignSuper
 	self load: 'Self' execute: 'testAssignSuper' expect: 42 as: #SOMParseError.! !
 
-!SOMTest methodsFor: 'tests' stamp: 'jpb 4/11/2020 15:35:14'!
+!SOMTest methodsFor: 'tests' stamp: 'jpb 2/13/2021 19:56:54'!
 exec: aTest
 	| universe |
 	universe := SOMUniverse new.
-	universe start: {'-cp'. 'Smalltalk'. 'TestSuite/TestHarness.som'. aTest}.
+	universe start: (SOMTools findTestArgumentsByTest: aTest).
 	self assert: 0 equals: universe exitCode.! !
 
 !SOMTest methodsFor: 'tests'!
@@ -2020,11 +2044,11 @@ handleArguments: args
 	
 	^ remainingArgs! !
 
-!SOMUniverse methodsFor: 'as yet unclassified'!
+!SOMUniverse methodsFor: 'as yet unclassified' stamp: 'jpb 2/17/2021 19:40:07'!
 setupClasspath: classpathString
-	| cp |
-	cp := ':' split: classpathString.
-	self class classPaths: cp
+	| newClassPaths |
+	newClassPaths := ':' split: classpathString.
+	self class classPaths: newClassPaths.
 ! !
 
 !SOMUniverse methodsFor: 'as yet unclassified'!
