@@ -1,171 +1,171 @@
-'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:19:04 pm'!
+'From Cuis 5.0 [latest update: #4526] on 20 February 2021 at 11:28:13 am'!
 'Description The core objects package of the AweSOM (Simple object machine) implementation,
 which contains the core objects used by the interpreter and vm.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-CoreObjects' 1 5!
+!provides: 'AweSOM-CoreObjects' 1 9!
 !requires: 'AweSOM-Meta' 1 2 nil!
-SystemOrganization addCategory: #'AweSOM-CoreObjects'!
+SystemOrganization addCategory: 'AweSOM-CoreObjects'!
 
 
-!classDefinition: #SOMObject category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMObject category: 'AweSOM-CoreObjects'!
 Object subclass: #SOMObject
 	instanceVariableNames: 'universe theHash fields indexableFields somClass'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMObject class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMObject class' category: 'AweSOM-CoreObjects'!
 SOMObject class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMArray category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMArray category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMArray
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMArray class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMArray class' category: 'AweSOM-CoreObjects'!
 SOMArray class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMFrame category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMFrame category: 'AweSOM-CoreObjects'!
 SOMArray subclass: #SOMFrame
 	instanceVariableNames: 'somPreviousFrame somContext somMethod stackPointer bytecodeIndex localOffset'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMFrame class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMFrame class' category: 'AweSOM-CoreObjects'!
 SOMFrame class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBlock category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMBlock category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMBlock
 	instanceVariableNames: 'somBlockMethod somContext'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMBlock class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMBlock class' category: 'AweSOM-CoreObjects'!
 SOMBlock class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMClass category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMClass category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMClass
 	instanceVariableNames: 'somSuperClass somName somInstanceFields somInstanceInvokables'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMClass class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMClass class' category: 'AweSOM-CoreObjects'!
 SOMClass class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMInvokable category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMInvokable category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMInvokable
 	instanceVariableNames: 'somSignature somHolder somNumberOfArguments'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMInvokable class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMInvokable class' category: 'AweSOM-CoreObjects'!
 SOMInvokable class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBlockEvaluation category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMBlockEvaluation category: 'AweSOM-CoreObjects'!
 SOMInvokable subclass: #SOMBlockEvaluation
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMBlockEvaluation class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMBlockEvaluation class' category: 'AweSOM-CoreObjects'!
 SOMBlockEvaluation class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMMethod category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMMethod category: 'AweSOM-CoreObjects'!
 SOMInvokable subclass: #SOMMethod
 	instanceVariableNames: 'numberOfLocals maxStackDepth bytecodes constants lexicalContext'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMMethod class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMMethod class' category: 'AweSOM-CoreObjects'!
 SOMMethod class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMPrimitive category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMPrimitive category: 'AweSOM-CoreObjects'!
 SOMInvokable subclass: #SOMPrimitive
 	instanceVariableNames: 'realSignature'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMPrimitive class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMPrimitive class' category: 'AweSOM-CoreObjects'!
 SOMPrimitive class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMNumber category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMNumber category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMNumber
 	instanceVariableNames: 'number'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMNumber class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMNumber class' category: 'AweSOM-CoreObjects'!
 SOMNumber class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBigInteger category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMBigInteger category: 'AweSOM-CoreObjects'!
 SOMNumber subclass: #SOMBigInteger
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMBigInteger class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMBigInteger class' category: 'AweSOM-CoreObjects'!
 SOMBigInteger class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMDouble category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMDouble category: 'AweSOM-CoreObjects'!
 SOMNumber subclass: #SOMDouble
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMDouble class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMDouble class' category: 'AweSOM-CoreObjects'!
 SOMDouble class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMInteger category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMInteger category: 'AweSOM-CoreObjects'!
 SOMNumber subclass: #SOMInteger
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMInteger class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMInteger class' category: 'AweSOM-CoreObjects'!
 SOMInteger class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMString category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMString category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMString
 	instanceVariableNames: 'string'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMString class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMString class' category: 'AweSOM-CoreObjects'!
 SOMString class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMSymbol category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMSymbol category: 'AweSOM-CoreObjects'!
 SOMString subclass: #SOMSymbol
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMSymbol class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMSymbol class' category: 'AweSOM-CoreObjects'!
 SOMSymbol class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMSystem category: #'AweSOM-CoreObjects'!
+!classDefinition: #SOMSystem category: 'AweSOM-CoreObjects'!
 SOMObject subclass: #SOMSystem
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-CoreObjects'!
-!classDefinition: 'SOMSystem class' category: #'AweSOM-CoreObjects'!
+!classDefinition: 'SOMSystem class' category: 'AweSOM-CoreObjects'!
 SOMSystem class
 	instanceVariableNames: ''!
 
@@ -1599,6 +1599,34 @@ primconcatenate: somString
 primhashcode
 	^ universe newNumber: self hash! !
 
+!SOMString methodsFor: 'primitives' stamp: 'jpb 2/20/2021 11:15:14'!
+primisDigits
+
+	string isEmpty ifTrue: [ ^universe globalFalse ].
+	
+	string do: [:chr| chr isDigit ifFalse: [^universe globalFalse] ].
+	
+	^universe globalTrue! !
+
+!SOMString methodsFor: 'primitives' stamp: 'jpb 2/20/2021 11:14:39'!
+primisLetters
+	string isEmpty ifTrue: [ ^universe globalFalse ].
+	
+	string do: [:char | (char isLetter) ifFalse: [ ^universe globalFalse ] ].
+	
+	^universe globalTrue.! !
+
+!SOMString methodsFor: 'primitives' stamp: 'jpb 2/20/2021 11:28:03'!
+primisWhiteSpace
+	| spaces |
+	spaces _ #(10 32 9 13).
+	
+	string isEmpty ifTrue: [^universe globalFalse ].
+	
+	string do: [:char | (spaces includes: char asciiValue) ifFalse: [ ^universe globalFalse ] ].
+	
+	^universe globalTrue.! !
+
 !SOMString methodsFor: 'primitives'!
 primlength
 	^ universe newNumber: self string size! !
@@ -1615,15 +1643,6 @@ primprimSubstringFrom: start to: end
 	
 	^ self universe newString: 
 		(self string copyFrom: start number to: end number)! !
-
-!SOMString methodsFor: 'as yet unclassified' stamp: 'jpb 4/11/2020 15:19:25'!
-primisWhiteSpace
-	| spaces |
-	spaces _ #(10 32 9 13).
-	
-	string do: [:char | (spaces includes: char asciiValue) ifTrue: [ ^true ] ].
-	
-	^false.! !
 
 !SOMString class methodsFor: 'instance creation'!
 inUniverse: universe string: string

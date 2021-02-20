@@ -1,9 +1,9 @@
-'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:34:11 pm'!
+'From Cuis 5.0 [latest update: #4526] on 20 February 2021 at 10:40:14 am'!
 'Description The compiler package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Compiler' 1 8!
+!provides: 'AweSOM-Compiler' 1 13!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-Compiler-Test'!
@@ -112,7 +112,7 @@ SOMCompiler class
 
 !classDefinition: #SOMLexer category: 'AweSOM-Compiler'!
 Object subclass: #SOMLexer
-	instanceVariableNames: 'stream text nextText lineNumber peekDone sym nextSym symChr nextSymChr buf bufP'
+	instanceVariableNames: 'stream text nextText lineNumber peekDone sym nextSym symChr nextSymChr buf bufP appendNewlineOnFirstLine'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Compiler'!
@@ -1212,6 +1212,52 @@ testIsOperator
 	]
 	! !
 
+!SOMLexerTest methodsFor: 'tests' stamp: 'jpb 2/19/2021 08:24:37'!
+testMatchingMultiline2String
+	| lexer lines expected |
+	lines := String newLineString join: #(
+		''''
+		'''. 1 + 2. '
+	).
+	
+	lexer := SOMLexer on: lines readStream.
+	
+	expected := String newLineString.
+	
+	self assert: #STString equals: lexer symbol.
+	self assert: expected equals: lexer text.
+	! !
+
+!SOMLexerTest methodsFor: 'tests' stamp: 'jpb 2/20/2021 10:08:55'!
+testMatchingMultilineString
+	| lexer lines expected |
+	lines := String newLineString join: #(
+		'''foo '
+		'bar'
+		' long''. 1 + 2. '
+	).
+	
+	lexer := SOMLexer on: lines readStream.
+	
+	expected := String lfString join: #(
+		'foo '
+		'bar'
+		' long'
+	).
+	
+	self assert: #STString equals: lexer symbol.
+	self assert: expected equals: lexer text.
+	! !
+
+!SOMLexerTest methodsFor: 'tests' stamp: 'jpb 2/18/2021 19:34:58'!
+testMatchingSimpleString
+	| lexer |
+	lexer := SOMLexer on: '''foobar ''.' readStream.
+	
+	self assert: #STString equals: lexer symbol.
+	self assert: 'foobar ' equals: lexer text.
+	! !
+
 !SOMClassGenerationContext methodsFor: 'initialization'!
 initialize
 
@@ -1445,6 +1491,9 @@ inUniverse: universe on: classPaths
 		universe: universe;
 		yourself.! !
 
+!SOMLexer methodsFor: 'helper' stamp: 'jpb 2/20/2021 09:50:13'!
+ignoreNewlines! !
+
 !SOMLexer methodsFor: 'helper'!
 isOperator: char
 	^ char == $~ or: [
@@ -1482,11 +1531,8 @@ nextWordInBufIs: aString
 
 	^ false.! !
 
-!SOMLexer methodsFor: 'helper'!
-readBufferIfEmpty: aBlock
-	[self endOfBuffer] whileTrue: [
-		self fillBuffer == -1
-			ifTrue: aBlock]! !
+!SOMLexer methodsFor: 'helper' stamp: 'jpb 2/20/2021 09:50:04'!
+preserveNewlines! !
 
 !SOMLexer methodsFor: 'helper'!
 skipComment
@@ -1676,27 +1722,31 @@ matchPrimitive
 	^ sym
 	! !
 
-!SOMLexer methodsFor: 'lexing'!
+!SOMLexer methodsFor: 'lexing' stamp: 'jpb 2/20/2021 10:37:31'!
 matchString
+	
 	sym := #STString.
 	symChr := nil.
 	text := RWBinaryOrTextStream on: String new.
+	appendNewlineOnFirstLine := true.
 	
 	self readNext. "skip start $' "
+	
 	[ self currentChar == $' ]
-		whileFalse: [
-			self readBufferIfEmpty: [ ^ sym ].
-			self matchStringChar.
-		].
+	whileFalse: [
+		self matchStringChar.
+		self readBufferForStringIfEmpty:  [ ^ sym ] ].	
 	
 	self readNext. "skip the ending $'"
-	
+		
 	^ sym! !
 
-!SOMLexer methodsFor: 'lexing'!
+!SOMLexer methodsFor: 'lexing' stamp: 'jpb 2/19/2021 13:09:03'!
 matchStringChar
 	| cur |
 	cur := self currentChar.
+	cur isNil ifTrue: [ ^ self ].
+	
 	$\ == cur
 		ifTrue: [
 			self readNext.
@@ -1791,10 +1841,6 @@ currentChar
 	^ self bufchar: bufP! !
 
 !SOMLexer methodsFor: 'private'!
-endOfBuffer
-	^ bufP > (buf size)! !
-
-!SOMLexer methodsFor: 'private'!
 hasMoreInput
 	self readBufferIfEmpty: [^ false].
 	
@@ -1816,11 +1862,26 @@ initialize
 	buf := ''.
 	bufP := 1.! !
 
-!SOMLexer methodsFor: 'accessing'!
-currentLineNumber
-	^ lineNumber! !
+!SOMLexer methodsFor: 'buffered reading'!
+endOfBuffer
+	^ bufP > (buf size)! !
 
-!SOMLexer methodsFor: 'accessing'!
+!SOMLexer methodsFor: 'buffered reading' stamp: 'jpb 2/20/2021 10:39:30'!
+endOfBufferForString
+	"Adds special newline behaviour to strings, so that multiline strings are possible according the old Smalltalk style of doing them"
+
+	(self endOfBuffer and: [ appendNewlineOnFirstLine not ])
+		ifTrue: [ ^true ].
+		
+	(self endOfBuffer and: [ appendNewlineOnFirstLine ])
+		ifTrue: [ 
+			buf := String lfString.
+			appendNewlineOnFirstLine := false.
+			bufP := 1. ].
+		
+	^false! !
+
+!SOMLexer methodsFor: 'buffered reading'!
 fillBuffer
 	stream atEnd ifTrue: [^ -1].
 	
@@ -1832,13 +1893,46 @@ fillBuffer
 	bufP := 1.
 	^ buf size.! !
 
+!SOMLexer methodsFor: 'buffered reading' stamp: 'jpb 2/20/2021 10:06:00'!
+fillBufferForString
+	| readChar |
+	stream atEnd ifTrue: [^ -1].
+	
+	readChar := stream next.
+	
+	readChar ifNil: [ ^ -1].
+	
+	Character cr = readChar ifTrue: [ readChar := Character lf ].
+	Character lf = readChar ifTrue: [ lineNumber := lineNumber + 1 ].
+	
+	buf := readChar asString.	
+	bufP := 1.
+	
+	^ buf size.! !
+
+!SOMLexer methodsFor: 'buffered reading'!
+rawBuffer
+	^ buf! !
+
+!SOMLexer methodsFor: 'buffered reading' stamp: 'jpb 2/20/2021 10:25:44'!
+readBufferForStringIfEmpty: aBlock
+	[self endOfBufferForString ] whileTrue: [
+		self fillBufferForString == -1
+			ifTrue: aBlock]! !
+
+!SOMLexer methodsFor: 'buffered reading'!
+readBufferIfEmpty: aBlock
+	[self endOfBuffer] whileTrue: [
+		self fillBuffer == -1
+			ifTrue: aBlock]! !
+
+!SOMLexer methodsFor: 'accessing'!
+currentLineNumber
+	^ lineNumber! !
+
 !SOMLexer methodsFor: 'accessing'!
 nextText
 	^ nextText asString! !
-
-!SOMLexer methodsFor: 'accessing'!
-rawBuffer
-	^ buf! !
 
 !SOMLexer methodsFor: 'accessing'!
 stream: aReadStream
