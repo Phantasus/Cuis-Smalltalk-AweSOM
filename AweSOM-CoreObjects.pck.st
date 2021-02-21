@@ -1,10 +1,10 @@
-'From Cuis 5.0 [latest update: #4526] on 20 February 2021 at 11:28:13 am'!
+'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 11:30:35 am'!
 'Description The core objects package of the AweSOM (Simple object machine) implementation,
 which contains the core objects used by the interpreter and vm.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-CoreObjects' 1 9!
+!provides: 'AweSOM-CoreObjects' 1 10!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-CoreObjects'!
 
@@ -995,6 +995,22 @@ somContext
 !SOMBlock methodsFor: 'accessing'!
 somContext: anObject 
 	somContext := anObject! !
+
+!SOMBlock methodsFor: 'as yet unclassified' stamp: 'jpb 2/21/2021 10:36:59'!
+primvalue: arg1 with: arg2 
+	| actualMethod frame |
+	actualMethod := 	self somBlockMethod.
+	
+	actualMethod numberOfArguments ~= 2
+		ifTrue: [ self error: 'Invalid block arguments' ].
+	
+	frame := self universe interpreter somFrame.
+	frame push: arg1.
+	frame push: arg2.
+	actualMethod invokeInFrame: frame.
+
+	^frame
+! !
 
 !SOMClass methodsFor: 'accessing'!
 allInstanceFields

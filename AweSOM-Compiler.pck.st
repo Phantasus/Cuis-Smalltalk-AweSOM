@@ -1,9 +1,9 @@
-'From Cuis 5.0 [latest update: #4526] on 20 February 2021 at 10:40:14 am'!
+'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 11:30:38 am'!
 'Description The compiler package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Compiler' 1 13!
+!provides: 'AweSOM-Compiler' 1 14!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-Compiler-Test'!
@@ -535,64 +535,66 @@ setUpParser: source
 		fakeCgenc;
 		fakeMgenc.! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:28:44'!
 test01EmptyMethod
 
 	self setUpParser: 'x = ()' andApply: #method.
 	self assert: result locals isEmpty.
 	self assert: result arguments size equals: 1. "self"
 	self assert: result literals isEmpty.
-	self assert: result bytecodeCount equals: 4.
+	self assert: result bytecodesSize equals: 4.
+	self assert: result bytecodesCount equals: 2.
 	self assertBcAt: 2 is: SOMBCReturnLocal.! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:34:47'!
 test02Constant
 
 	self setUpParser: 'x = (1)' andApply: #method.
 	self assert: result literals size equals: 1.
-	self assert: result bytecodeCount equals: 7.
+	self assert: result bytecodesSize equals: 7.
+	self assert: result bytecodesCount equals: 4.
 	self assert: result literals first number equals: 1.! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:35:08'!
 test03aReturnObject
 
 	self setUpParser: 'x = (^1.)' andApply: #method.
-	self assert: result bytecodeCount equals: 3.
-	self assert: result bytecode size equals: 2! !
+	self assert: result bytecodesSize equals: 3.
+	self assert: result bytecodesCount equals: 2! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:35:24'!
 test03bReturnObject
 
 	self setUpParser: 'x = (^1)' andApply: #method.
-	self assert: result bytecodeCount equals: 3.
-	self assert: result bytecode size equals: 2! !
+	self assert: result bytecodesSize equals: 3.
+	self assert: result bytecodesCount equals: 2! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:35:34'!
 test04MultipleExpressions
 
 	self setUpParser: 'x = (1. 2. 3. ^self)' andApply: #method.
 	self assert: result isFinished.
-	self assert: result bytecodeCount equals: 13.
-	self assert: result bytecode size equals: 8.
+	self assert: result bytecodesSize equals: 13.
+	self assert: result bytecodesCount equals: 8.
 	self assertBcAt: 8 is: SOMBCReturnLocal.! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:35:47'!
 test05UnaryMessage
 
 	self setUpParser: 'x = (1 test)' andApply: #method.
-	self assert: result bytecode size equals: 5.
+	self assert: result bytecodesCount equals: 5.
 	self assertLiteralAt: 2 equals: #test.
-	self assert: result bytecodeCount equals: 9.
+	self assert: result bytecodesSize equals: 9.
 ! !
 
-!ParseBytecodeTest methodsFor: 'tests'!
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 10:35:55'!
 test06MultipleUnaryMessages
 
 	self setUpParser: 'x = (1 test test2 test3)' andApply: #method.
-	self assert: result bytecode size equals: 7.
+	self assert: result bytecodesCount equals: 7.
 	self assertLiteralAt: 3 equals: #test2.
 	self assertLiteralAt: 4 equals: #test3.
-	self assert: result bytecodeCount equals: 13.
+	self assert: result bytecodesSize equals: 13.
 ! !
 
 !ParseBytecodeTest methodsFor: 'tests'!
@@ -883,6 +885,39 @@ test29do
 	self assertBcAt: 4 is: SOMBCSend.
 	self assertBcAt: 5 is: SOMBCSend.
 	self assertBcAt: 6 is: SOMBCReturnLocal.! !
+
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 11:29:43'!
+test30EmptyBlock
+
+	self setUpParser: '[]' withMgencAndApply: #nestedBlock.
+	
+	self assert: result locals isEmpty.
+	self assert: 0 equals: result arguments size.
+	
+	self assert: 1 equals: result literals size.
+	self assert: #nil equals: (result literals at: 1).
+	
+	self assert: 3 equals: result bytecodesSize.
+	self assert: 2 equals: result bytecodesCount.
+	
+	self assertBcAt: 2 is: SOMBCReturnLocal.! !
+
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 11:21:47'!
+test31ReturnNilBlock
+
+	self setUpParser: '[nil]' withMgencAndApply: #nestedBlock.
+	
+	self assert: result locals isEmpty.
+	self assert: 0 equals: result arguments size. "self"
+	
+	self assert: 1 equals: result literals size.
+	self assert: #nil equals: (result literals at: 1).
+	
+	self assert: 3 equals: result bytecodesSize.
+	self assert: 2 equals: result bytecodesCount.
+	
+	self assertBcAt: 1 is: SOMBCPushGlobal.
+	self assertBcAt: 2 is: SOMBCReturnLocal.! !
 
 !ParseBytecodeTest methodsFor: 'assertion'!
 assertBcAt: idx is: bcType
@@ -2214,8 +2249,14 @@ bcSuperSend: selector
 	idx := self addLiteralIfAbsent: selector.
 	^ self bytecode add: (SOMBCSuperSend in: self index: idx numArgs: selector numArgs).! !
 
-!SOMMethodGenerationContext methodsFor: 'bytecode'!
-bytecodeCount
+!SOMMethodGenerationContext methodsFor: 'bytecode' stamp: 'jpb 2/21/2021 10:28:26'!
+bytecodesCount
+	"Returns the bytecodes total counted"
+	^ self bytecode size! !
+
+!SOMMethodGenerationContext methodsFor: 'bytecode' stamp: 'jpb 2/21/2021 10:27:17'!
+bytecodesSize
+	"Returns the size of the recorded bytecodes in amount of bytes"
 	^ self bytecode 
 		inject: 0
 		into: [ :sum :ea | sum + ea length ]! !
@@ -2693,14 +2734,18 @@ blockArguments
 	  mgenc addArgumentIfAbsent: self argument
 	] doWhileTrue: [sym == #colon].! !
 
-!SOMMethodParser methodsFor: 'patterns'!
+!SOMMethodParser methodsFor: 'patterns' stamp: 'jpb 2/21/2021 11:27:50'!
 blockBody: hasSeenPeriod
 	(self accept: #exit) ifTrue: [
 		^ self result.
 	].
 
 	sym == #endBlock ifTrue: [
+		mgenc bytecodesCount = 0
+			ifTrue: [ mgenc bcPushGlobal: #nil ].
+		
 		hasSeenPeriod ifTrue: [ mgenc removeLastBytecode ].
+		
 		^ mgenc
 			bcReturnLocal;
 			finished.
