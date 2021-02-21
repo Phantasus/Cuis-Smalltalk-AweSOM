@@ -1,10 +1,10 @@
-'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 11:30:35 am'!
+'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 6:21:23 pm'!
 'Description The core objects package of the AweSOM (Simple object machine) implementation,
 which contains the core objects used by the interpreter and vm.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-CoreObjects' 1 10!
+!provides: 'AweSOM-CoreObjects' 1 11!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-CoreObjects'!
 
@@ -1518,9 +1518,20 @@ primasInteger
 primcos
 	^ universe newNumber: self number cos! !
 
-!SOMDouble methodsFor: 'primitives' stamp: 'jpb 4/11/2020 13:14:27'!
+!SOMDouble methodsFor: 'primitives' stamp: 'jpb 2/21/2021 18:20:08'!
 primround
-	^ universe newNumber: (self number rounded)! !
+	| beforeRounding truncated fractionPartAbs  |
+	"See https://en.wikipedia.org/wiki/Rounding#Round_half_away_from_zero"
+	
+	"Provides a commercial rounding implementation"
+	beforeRounding := self number.
+	truncated := beforeRounding truncated.
+
+	fractionPartAbs := (beforeRounding - truncated) abs.
+	fractionPartAbs >= (1/2)
+		ifTrue: [ ^universe newNumber: truncated + beforeRounding sign].
+
+	^ universe newNumber: truncated.! !
 
 !SOMDouble methodsFor: 'primitives'!
 primsin

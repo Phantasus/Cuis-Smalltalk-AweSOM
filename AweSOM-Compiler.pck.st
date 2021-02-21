@@ -1,9 +1,9 @@
-'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 11:30:38 am'!
+'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 6:21:21 pm'!
 'Description The compiler package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Compiler' 1 14!
+!provides: 'AweSOM-Compiler' 1 15!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-Compiler-Test'!
@@ -918,6 +918,41 @@ test31ReturnNilBlock
 	
 	self assertBcAt: 1 is: SOMBCPushGlobal.
 	self assertBcAt: 2 is: SOMBCReturnLocal.! !
+
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 14:36:51'!
+test32SuperChained
+
+	self setUpParser: 'x = (super test yourself)' andApply: #method.
+	self assert: 1 equals: bytecode first index. 1. "self"
+
+	self assert: 6 equals: bytecode size.
+	self assertLiteralAt: 2 equals: #test.
+	
+	self assertBcAt: 2 is: SOMBCSuperSend.
+	self assertBcAt: 3 is: SOMBCSend.! !
+
+!ParseBytecodeTest methodsFor: 'tests' stamp: 'jpb 2/21/2021 17:35:14'!
+test33SuperChainedWithKeywords
+
+	self setUpParser: 'x = (super key: super yourself yourself key: super yourself yourself)' andApply: #method.
+	self assert: 1 equals: bytecode first index. 1. "self"
+
+	self assert: 11 equals: bytecode size.
+	self assert: #yourself equals: (result literals at:  1).
+	self assert: #key:key: equals: (result literals at: 2).
+
+	self assertBcAt: 1 is: SOMBCPushArgument. "self"
+	self assertBcAt: 2 is: SOMBCPushArgument.	
+	self assertBcAt: 3 is: SOMBCSuperSend.
+	self assertBcAt: 4 is: SOMBCSend.
+	self assertBcAt: 5 is: SOMBCPushArgument.
+	self assertBcAt: 6 is: SOMBCSuperSend.
+	self assertBcAt: 7 is: SOMBCSend.
+	self assertBcAt: 8 is: SOMBCSuperSend.
+	self assertBcAt: 9 is: SOMBCPop.
+	self assertBcAt: 10 is: SOMBCPushArgument.
+	self assertBcAt: 11 is: SOMBCReturnLocal.
+	! !
 
 !ParseBytecodeTest methodsFor: 'assertion'!
 assertBcAt: idx is: bcType
@@ -2241,12 +2276,13 @@ bcSend: selector
 	idx := self addLiteralIfAbsent: selector.
 	^ self bytecode add: (SOMBCSend in: self index: idx numArgs: selector numArgs).! !
 
-!SOMMethodGenerationContext methodsFor: 'bytecode'!
+!SOMMethodGenerationContext methodsFor: 'bytecode' stamp: 'jpb 2/21/2021 17:10:51'!
 bcSuperSend: selector
 
 	| idx |
 	self assert: selector isSymbol.
 	idx := self addLiteralIfAbsent: selector.
+	
 	^ self bytecode add: (SOMBCSuperSend in: self index: idx numArgs: selector numArgs).! !
 
 !SOMMethodGenerationContext methodsFor: 'bytecode' stamp: 'jpb 2/21/2021 10:28:26'!
@@ -2708,13 +2744,17 @@ binaryMessage: superSend
 	superSend ifTrue: [mgenc bcSuperSend: sel]
 				ifFalse:[mgenc bcSend: sel].! !
 
-!SOMMethodParser methodsFor: 'patterns'!
+!SOMMethodParser methodsFor: 'patterns' stamp: 'jpb 2/21/2021 16:59:05'!
 binaryOperand: superSend
 	| doSuper |
 	doSuper := self primary: superSend.
 	
 	[self symIsIdentifier] whileTrue:
-		[self unaryMessage: doSuper].
+		[
+			self unaryMessage: doSuper.
+			"Only the first send in a sequence of chained sends to super is a super send" 
+			doSuper := false
+		].
 	
 	^ doSuper! !
 
@@ -2953,11 +2993,11 @@ locals
 		mgenc addLocalIfAbsent: self variable.
 	]! !
 
-!SOMMethodParser methodsFor: 'patterns'!
+!SOMMethodParser methodsFor: 'patterns' stamp: 'jpb 2/21/2021 16:13:35'!
 messages: superSend
 	| doSuper |
 	doSuper := superSend.
-		
+			
 	self symIsIdentifier ifTrue: [
 		[ self unaryMessage: doSuper.
 		  doSuper := false.
@@ -3076,7 +3116,7 @@ parseNestedBlock
 	
 	^ result! !
 
-!SOMMethodParser methodsFor: 'patterns'!
+!SOMMethodParser methodsFor: 'patterns' stamp: 'jpb 2/21/2021 16:59:22'!
 primary: doSuper
 	| superSend |
 	superSend := doSuper.

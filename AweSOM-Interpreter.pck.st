@@ -1,233 +1,233 @@
-'From Cuis 5.0 [latest update: #4103] on 11 April 2020 at 4:18:55 pm'!
+'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 6:21:26 pm'!
 'Description The interpreter package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Interpreter' 1 1!
+!provides: 'AweSOM-Interpreter' 1 2!
 !requires: 'AweSOM-VM' 1 3 nil!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-CoreObjects' 1 5 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
-SystemOrganization addCategory: #'AweSOM-Interpreter'!
+SystemOrganization addCategory: 'AweSOM-Interpreter'!
 
 
-!classDefinition: #SOMBytecode category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBytecode category: 'AweSOM-Interpreter'!
 Object subclass: #SOMBytecode
 	instanceVariableNames: 'mgenc'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBytecode class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBytecode class' category: 'AweSOM-Interpreter'!
 SOMBytecode class
 	instanceVariableNames: 'instructionName'!
 
-!classDefinition: #SOMBCDup category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCDup category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCDup
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCDup class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCDup class' category: 'AweSOM-Interpreter'!
 SOMBCDup class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCHalt category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCHalt category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCHalt
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCHalt class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCHalt class' category: 'AweSOM-Interpreter'!
 SOMBCHalt class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPop category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPop category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCPop
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPop class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPop class' category: 'AweSOM-Interpreter'!
 SOMBCPop class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCReturnLocal category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCReturnLocal category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCReturnLocal
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCReturnLocal class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCReturnLocal class' category: 'AweSOM-Interpreter'!
 SOMBCReturnLocal class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCReturnNonLocal category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCReturnNonLocal category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCReturnNonLocal
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCReturnNonLocal class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCReturnNonLocal class' category: 'AweSOM-Interpreter'!
 SOMBCReturnNonLocal class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCStep category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCStep category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBCStep
 	instanceVariableNames: 'originalBytecode owningFrames'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCStep class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCStep class' category: 'AweSOM-Interpreter'!
 SOMBCStep class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBytecodeWithIndex category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBytecodeWithIndex category: 'AweSOM-Interpreter'!
 SOMBytecode subclass: #SOMBytecodeWithIndex
 	instanceVariableNames: 'index'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBytecodeWithIndex class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBytecodeWithIndex class' category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushBlock category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushBlock category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBCPushBlock
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushBlock class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushBlock class' category: 'AweSOM-Interpreter'!
 SOMBCPushBlock class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushConstant category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushConstant category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBCPushConstant
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushConstant class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushConstant class' category: 'AweSOM-Interpreter'!
 SOMBCPushConstant class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushGlobal category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushGlobal category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBCPushGlobal
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushGlobal class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushGlobal class' category: 'AweSOM-Interpreter'!
 SOMBCPushGlobal class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCSend category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCSend category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBCSend
 	instanceVariableNames: 'numArgs'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCSend class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCSend class' category: 'AweSOM-Interpreter'!
 SOMBCSend class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCSuperSend category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCSuperSend category: 'AweSOM-Interpreter'!
 SOMBCSend subclass: #SOMBCSuperSend
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCSuperSend class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCSuperSend class' category: 'AweSOM-Interpreter'!
 SOMBCSuperSend class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBytecodeWithFieldIndex category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBytecodeWithFieldIndex category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBytecodeWithFieldIndex
 	instanceVariableNames: 'fieldIndex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBytecodeWithFieldIndex class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBytecodeWithFieldIndex class' category: 'AweSOM-Interpreter'!
 SOMBytecodeWithFieldIndex class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPopField category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPopField category: 'AweSOM-Interpreter'!
 SOMBytecodeWithFieldIndex subclass: #SOMBCPopField
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPopField class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPopField class' category: 'AweSOM-Interpreter'!
 SOMBCPopField class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushField category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushField category: 'AweSOM-Interpreter'!
 SOMBytecodeWithFieldIndex subclass: #SOMBCPushField
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushField class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushField class' category: 'AweSOM-Interpreter'!
 SOMBCPushField class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBytecodeWithIndexAndContextIndex category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBytecodeWithIndexAndContextIndex category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndex subclass: #SOMBytecodeWithIndexAndContextIndex
 	instanceVariableNames: 'contextIndex'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBytecodeWithIndexAndContextIndex class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBytecodeWithIndexAndContextIndex class' category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndexAndContextIndex class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPopArgument category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPopArgument category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndexAndContextIndex subclass: #SOMBCPopArgument
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPopArgument class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPopArgument class' category: 'AweSOM-Interpreter'!
 SOMBCPopArgument class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPopLocal category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPopLocal category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndexAndContextIndex subclass: #SOMBCPopLocal
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPopLocal class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPopLocal class' category: 'AweSOM-Interpreter'!
 SOMBCPopLocal class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushArgument category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushArgument category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndexAndContextIndex subclass: #SOMBCPushArgument
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushArgument class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushArgument class' category: 'AweSOM-Interpreter'!
 SOMBCPushArgument class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMBCPushLocal category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMBCPushLocal category: 'AweSOM-Interpreter'!
 SOMBytecodeWithIndexAndContextIndex subclass: #SOMBCPushLocal
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMBCPushLocal class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMBCPushLocal class' category: 'AweSOM-Interpreter'!
 SOMBCPushLocal class
 	instanceVariableNames: ''!
 
-!classDefinition: #SOMInterpreter category: #'AweSOM-Interpreter'!
+!classDefinition: #SOMInterpreter category: 'AweSOM-Interpreter'!
 Object subclass: #SOMInterpreter
 	instanceVariableNames: 'frame universe currentBytecode stoppedFrame stopped'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'AweSOM-Interpreter'!
-!classDefinition: 'SOMInterpreter class' category: #'AweSOM-Interpreter'!
+!classDefinition: 'SOMInterpreter class' category: 'AweSOM-Interpreter'!
 SOMInterpreter class
 	instanceVariableNames: ''!
 
@@ -669,21 +669,24 @@ doReturnNonLocal
 	[self somFrame ~= context] whileTrue: [self popFrame].
 	self popFrameAndPushResult: result! !
 
-!SOMInterpreter methodsFor: 'bytecode processing'!
+!SOMInterpreter methodsFor: 'bytecode processing' stamp: 'jpb 2/21/2021 13:13:03'!
 doSend
 
 	| methodName receiver |
+	
 	methodName := currentBytecode selector.
 	receiver := frame stackElementAtIndex: currentBytecode numArgs + 1.
 	^ self 
 		send: methodName
 		toClazz: receiver somClass! !
 
-!SOMInterpreter methodsFor: 'bytecode processing'!
+!SOMInterpreter methodsFor: 'bytecode processing' stamp: 'jpb 2/21/2021 14:29:18'!
 doSuperSend
 	| methodName superClazz |
+	
 	methodName := self currentBytecode selector.
 	superClazz := self somFrame outerContext somMethod somHolder somSuperClass.
+	
 	self 
 		send: methodName
 		toClazz: superClazz! !
