@@ -46,12 +46,10 @@ For installing the packages do:
 ```Smalltalk
 Feature require: 'AweSOM-Meta'.
 Feature require: 'AweSOM-Compiler'.
-Feature require: 'AweSOM-Compiler-Test'.
 Feature require: 'AweSOM-CoreObjects'.
 Feature require: 'AweSOM-Interpreter'.
 Feature require: 'AweSOM-Test'.
 Feature require: 'AweSOM-VM'.
-Feature require: 'AweSOM-VM-Test'.
 ```
 
  [Cuis]: https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev
