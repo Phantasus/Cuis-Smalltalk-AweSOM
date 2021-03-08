@@ -1,10 +1,10 @@
-'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:01:31 pm'!
+'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:55:01 pm'!
 'Description The base package of the AweSOM (Simple object machine) implementation,
 which contains shared base functionality.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Meta' 1 5!
+!provides: 'AweSOM-Meta' 1 6!
 !requires: 'Cuis-Base' 50 4103 nil!
 SystemOrganization addCategory: 'AweSOM-Meta'!
 
@@ -83,16 +83,6 @@ loc
 	^ pi classes inject: 0 into: [:sum :class | sum + class linesOfCode].
 ! !
 
-!SOMTools class methodsFor: 'tools'!
-locWithoutTests
-
-	| pi |
-	pi := PackageInfo named: 'AweSOM'.
-	^ (pi classes
-		reject: [:class | class inheritsFrom: TestCase])
-		inject: 0 into: [:sum :class | sum + class linesOfCode].
-! !
-
 !SOMTools class methodsFor: 'recompiling'!
 recompile
 
@@ -100,17 +90,6 @@ recompile
 	(PackageInfo named: 'AweSOM') classes
 		do: [:class | class compileAll]
 		displayingProgress: 'Recompiling AweSOM'.! !
-
-!SOMTools class methodsFor: 'as yet unclassified'!
-parseBenchmarkString: string
-
-	"Extracts the numbers from the output"
-	^ (string
-		regex: 'RESULT\: [0-9]+ ms|All tests completed \([0-9]+ ms\)'
-		matchesCollect: [:m | (m allRegexMatches: '[0-9]+') first])
-		inject: ''
-		into: [:all :ea | all , String cr , ea].
-	! !
 
 !SOMTools class methodsFor: 'as yet unclassified'!
 usefulStuff

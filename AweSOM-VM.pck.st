@@ -1,9 +1,9 @@
-'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:00:29 pm'!
+'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:55:02 pm'!
 'Description The vm package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-VM' 1 10!
+!provides: 'AweSOM-VM' 1 11!
 !requires: 'Cuis-Base' 50 4103 nil!
 !requires: 'AweSOM-Test' 1 1 nil!
 !requires: 'AweSOM-Meta' 1 3 nil!
@@ -2052,9 +2052,9 @@ setupClasspath: classpathString
 	self class classPaths: newClassPaths.
 ! !
 
-!SOMUniverse methodsFor: 'as yet unclassified'!
+!SOMUniverse methodsFor: 'as yet unclassified' stamp: 'jpb 3/8/2021 20:40:38'!
 setupDefaultClasspath
-	self setupClasspath: '.'! !
+	self setupClasspath: SOMTools basePath , '/Smalltalk'! !
 
 !SOMUniverse methodsFor: 'loading'!
 loadAndStoreFromSource: source
