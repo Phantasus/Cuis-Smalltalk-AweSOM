@@ -52,6 +52,49 @@ Feature require: 'AweSOM-Interpreter'.
 Feature require: 'AweSOM-VM'.
 ```
 
+## Playing around
+
+For printing "Hello World" on the transcript do-it in a Workspace:
+
+```Smalltalk
+universe := SOMUniverse new.
+universe setupDefaultClasspath.
+
+universe eval: '''Hello World'' println'.
+```
+
+AweSOM is a little bit "goatish" when it comes to searching the
+class path. When a "message not found" error occurs on the
+UndefinedObject, then it's very likely that the system didn't
+find the `core-lib` class-path, there it needs to read from
+the `Smalltalk` directory the base classes. When it doesn't
+find them it ignores them silently and now the whole base
+system is not defined.
+
+Another way of running a Hello World example is to create
+the class and then run it. This is what `#eval:` does
+indirectly.
+
+To do that by hand do-it the following in a Workspace:
+
+```Smalltalk
+
+universe := SOMUniverse new.
+universe setupDefaultClasspath.
+
+universe loadAndStoreFromSource: 'Hello = (
+  run = (
+    ''Hello World!'' println.
+  )
+)'.
+
+universe start: {'Hello'}.
+```
+
+Which will print too in an open Transcript "Hello World".
+
+## Links
+
  [Cuis]: https://github.com/Cuis-Smalltalk/Cuis-Smalltalk-Dev
  [AweSOM]: https://github.com/SOM-st/AweSOM
  [SOM]:    https://som-st.github.io/
