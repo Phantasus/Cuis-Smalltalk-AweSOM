@@ -1,11 +1,12 @@
-'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 6:21:26 pm'!
+'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:00:27 pm'!
 'Description The interpreter package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Interpreter' 1 2!
+!provides: 'AweSOM-Interpreter' 1 3!
 !requires: 'AweSOM-VM' 1 3 nil!
 !requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-Test' 1 1 nil!
 !requires: 'AweSOM-CoreObjects' 1 5 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-Interpreter'!

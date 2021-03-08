@@ -45,10 +45,10 @@ For installing the packages do:
 
 ```Smalltalk
 Feature require: 'AweSOM-Meta'.
+Feature require: 'AweSOM-Test'.
 Feature require: 'AweSOM-Compiler'.
 Feature require: 'AweSOM-CoreObjects'.
 Feature require: 'AweSOM-Interpreter'.
-Feature require: 'AweSOM-Test'.
 Feature require: 'AweSOM-VM'.
 ```
 

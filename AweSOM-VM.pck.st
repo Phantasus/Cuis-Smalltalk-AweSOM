@@ -1,10 +1,11 @@
-'From Cuis 5.0 [latest update: #4526] on 17 February 2021 at 8:34:13 pm'!
+'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:00:29 pm'!
 'Description The vm package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-VM' 1 9!
+!provides: 'AweSOM-VM' 1 10!
 !requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-Test' 1 1 nil!
 !requires: 'AweSOM-Meta' 1 3 nil!
 SystemOrganization addCategory: 'AweSOM-VM-Test'!
 SystemOrganization addCategory: 'AweSOM-VM'!

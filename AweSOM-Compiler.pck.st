@@ -1,10 +1,11 @@
-'From Cuis 5.0 [latest update: #4526] on 21 February 2021 at 6:21:21 pm'!
+'From Cuis 5.0 [latest update: #4526] on 8 March 2021 at 8:00:26 pm'!
 'Description The compiler package of the AweSOM (Simple object machine) implementation.
 
 Original authors: Arvid Heise, Matthias Kleine, Robert Krahn, Michael Haupt.
 License: MIT'!
-!provides: 'AweSOM-Compiler' 1 15!
+!provides: 'AweSOM-Compiler' 1 16!
 !requires: 'Cuis-Base' 50 4103 nil!
+!requires: 'AweSOM-VM' 1 10 nil!
 !requires: 'AweSOM-Meta' 1 2 nil!
 SystemOrganization addCategory: 'AweSOM-Compiler-Test'!
 SystemOrganization addCategory: 'AweSOM-Compiler'!
